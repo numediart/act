@@ -43,8 +43,8 @@ public class UserInterfaceManager : MonoBehaviour
 
     public void Init()
     {
-        if (NetworkManager.Instance.PioconnectionRoom == null)
-            UpdateSlidersValues();
+       // if (NetworkManager.Instance.PioconnectionRoom == null)
+       //     UpdateSlidersValues();
         
         HideAllIntensities();
     }

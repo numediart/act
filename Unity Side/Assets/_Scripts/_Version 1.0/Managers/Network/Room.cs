@@ -22,15 +22,17 @@ public class Room : MonoBehaviour
     
     #region Listeners
 
+    
+    
     public void TryJoinRoomAsAdmin()
     {
-        NetworkManager.Instance.RequestToJoinRoom(Id, _passwordInput, true);
+     //   NetworkManager.Instance.RequestToJoinRoom(Id, _passwordInput, true);
         ResetInput();
     }
 
     public void TryJoinRoomAsUser()
     {
-        NetworkManager.Instance.RequestToJoinRoom(Id, _passwordInput, false);
+      //  NetworkManager.Instance.RequestToJoinRoom(Id, _passwordInput, false);
         ResetInput();
     }
 

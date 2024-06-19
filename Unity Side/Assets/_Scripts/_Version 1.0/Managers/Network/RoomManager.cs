@@ -12,7 +12,8 @@ public class RoomManager : MonoBehaviour
     [Header("Parameters")] [SerializeField] private KeyCode _keyToToggleRoomCreationMenu;
 
     private Dictionary<string, Room> _roomsByName = new Dictionary<string, Room>();
-
+    
+    // get all WoZ Rooms info to display them in the room list 
     private void Update()
     {
         if (Input.GetKeyDown(_keyToToggleRoomCreationMenu))

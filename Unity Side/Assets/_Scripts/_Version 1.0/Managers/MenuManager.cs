@@ -6,13 +6,13 @@ public class MenuManager : MonoBehaviour
     public void TryLoadUserScene()
     {
         // Connect using the network manager
-        NetworkManager.Instance.UserSelectedView(false);
+    //    NetworkManager.Instance.UserSelectedView(false);
     }
 
     public void TryLoadAdminScene()
     {
         // Connect using the network manager
-        NetworkManager.Instance.UserSelectedView(true);
+     //   NetworkManager.Instance.UserSelectedView(true);
     }
     
     public void LoadUserScene()
@@ -24,7 +24,7 @@ public class MenuManager : MonoBehaviour
     public void LoadAdminScene()
     {
         // Load scene
-        SceneManager.LoadScene("_Ver 1.0 - Admin");
+        SceneManager.LoadScene("_Ver 1.0 - Admin"); 
     }
 
     public void LoadRecordScene()
@@ -36,16 +36,22 @@ public class MenuManager : MonoBehaviour
     {
         SceneManager.LoadScene("_Ver 1.0 - Room Selection");
     }
+    
+    public void LoadLiveScene()
+    {
+        SceneManager.LoadScene("_Ver1.0 - LiveStream With LipSync");
+        NetworkManager.Instance.CreateLiveStreamingRoom("LiveStreamRoom", "password");
+    }
 
     public void LoadRoomSelectionSceneFromMenu()
     {
-        NetworkManager.Instance.ConnectToRoomSelection();
+     //   NetworkManager.Instance.ConnectToRoomSelection();
         LoadRoomSelectionScene();
     }
 
     public void ReturnToMainMenu()
     {
-        NetworkManager.Instance.ReturnToMainMenuEvent();
+      //  NetworkManager.Instance.ReturnToMainMenuEvent();
         SceneManager.LoadScene("_Ver 1.0 - Menu");
     }
 

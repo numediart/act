@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using _Scripts._Version_1._0.Controllers.RoomController;
+using _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService;
+using _Scripts._Version_1._0.Services.RoomServices.WoZRoomService;
 using TMPro;
 using UnityEngine;
 
@@ -47,14 +50,18 @@ public class RoomCreator : MonoBehaviour
             Debug.Log("password is empty");
             return;
         }
-        
+
         if (_passwordInput != _confirmPasswordInput)
         {
             Debug.Log("passwords don't match");
             return;
         }
-
-        NetworkManager.Instance.RequestToCreateRoom(_nameInput, _passwordInput);
+        
+        NetworkManager.Instance.CreateWoZRoom(_nameInput, _passwordInput);
+        gameObject.AddComponent<WoZRoomService>();
+        WoZRoomController woZRoomController = new WoZRoomController(GetComponent<WoZRoomService>());
+        
+        
         
         ResetInputs();
     }

@@ -51,6 +51,7 @@ public class BlendShapesController : MonoBehaviour
     {
         foreach (var change in dict)
         {
+            
             ChangeAvatarBlendShapeValue(_avatarBlendShapesKeyAndIndexDict[change.Key], change.Value * 20); // change.Value * by 20 because unity's blend shapes are between 0 and 100 and not 0 and 5
         }
     }
@@ -136,14 +137,14 @@ public class BlendShapesController : MonoBehaviour
     {
         // Serialize changes and send them to server
         // It is useful because you do 1 request per tab instead of 1 per pair of string and double in the changesDict
-        if (MainManager.Instance.NetworkMode != NetworkMode.OFFLINE)
-            NetworkManager.Instance.AvatarBlendShapesMoved(JsonConvert.SerializeObject(changesDict));
+    //    if (MainManager.Instance.NetworkMode != NetworkMode.OFFLINE)
+      //      NetworkManager.Instance.AvatarBlendShapesMoved(JsonConvert.SerializeObject(changesDict));
     }
 
     private void SendBlendShapesTransitionToUser(Dictionary<string, double> changesDict, float transitionDuration)
     {
-        if (MainManager.Instance.NetworkMode != NetworkMode.OFFLINE)
-            NetworkManager.Instance.AvatarBlendShapeTransitionToNewFrame(JsonConvert.SerializeObject(changesDict), transitionDuration);
+      //  if (MainManager.Instance.NetworkMode != NetworkMode.OFFLINE)
+     //       NetworkManager.Instance.AvatarBlendShapeTransitionToNewFrame(JsonConvert.SerializeObject(changesDict), transitionDuration);
     }
 
     #endregion

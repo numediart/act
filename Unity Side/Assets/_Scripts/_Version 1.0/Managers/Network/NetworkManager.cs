@@ -1,8 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using _Scripts._Version_1._0.Controllers.RoomController;
+using _Scripts._Version_1._0.Managers.Network.WebSocket;
+using _Scripts._Version_1._0.Managers.Network.WebSocket.Enum;
+using _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
-using PlayerIOClient;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
@@ -43,25 +47,12 @@ public class NetworkManager : MonoBehaviour
 
     private RoomInterfaceController _roomInterfaceController;
     
-    #region Getters
-
-    public Connection PioconnectionRoom
-    {
-        get => _pioconnectionRoom;
-        private set => _pioconnectionRoom = value;
-    }
-    
-    #endregion
     
     #region Intern Variables
     // References
     private MenuManager _menuManager;
     private RoomManager _roomManager;
 
-    // Player.io
-    private Connection _pioconnectionRoom;
-    private Connection _pioconnectionWoz;
-    private List<Message> _msgList = new List<Message>();
     
     // Room Types
     private string _roomSelectionType = "Room_Selection";
@@ -111,7 +102,7 @@ public class NetworkManager : MonoBehaviour
         }
     }
 
-    void Start()
+    private async void Start()
     {
         // Toggle event when scene is changing
         SceneManager.sceneLoaded += LookForScriptRefOnSceneChange;
@@ -120,14 +111,68 @@ public class NetworkManager : MonoBehaviour
         LookForScriptRefOnSceneChange(SceneManager.GetActiveScene(), LoadSceneMode.Single);
 
         Application.runInBackground = true;
-
-        // Create a random userid 
-        System.Random random = new System.Random();
-        UserId = "Guest" + random.Next(0, 10000);
-
-        //ConnectToRoom(_mainRoomId, _roomSelectionType);
+        WebsocketManager webSocketManager = WebsocketManager.Instance;
+        await  webSocketManager.Connect("ws://localhost:9001");
+        // User ID is the clientID 
     }
 
+
+    public async void CreateWoZRoom(string roomName, [CanBeNull] string password)
+    {
+        // Send request to server
+        await WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
+        {
+            EventName = EnumEvents.RequestWoZRoomCreation.Name, Data = new { roomName = roomName, password = password }
+        }));
+        
+    }
+    public async void CreateLiveStreamingRoom(string roomName, [CanBeNull] string password)
+    {
+        // Send request to server
+        await WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
+        {
+            EventName = EnumEvents.RequestLiveStreamingRoom.Name, Data = new { roomName = roomName, password = password }
+        }));
+    }
+    
+    public async void JoinRoom(string roomId, [CanBeNull] string password)
+    {
+        // Send request to server
+        await WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
+        {
+            EventName = EnumEvents.RequestRoomJoin.Name, Data = new { roomId = roomId, password = password }
+        }));
+    }
+    
+    public async void RequestRoomInfo(string roomId)
+    {
+        // Send request to server
+        await WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
+        {
+            EventName = EnumEvents.RequestRoomInfo.Name, Data = new { roomId = roomId }
+        }));
+    }
+    
+    public async void RequestPasswordChange(string roomId, string oldPassword, string newPassword)
+    {
+        // Send request to server
+        await WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
+        {
+            EventName = EnumEvents.RequestPasswordChange.Name, Data = new { roomId = roomId, oldPassword = oldPassword, newPassword = newPassword }
+        }));
+    }
+    
+    
+    
+
+
+/*
+    private void RegisterEvents()
+    {
+
+
+
+    }
     // Get answer from server
     private void FixedUpdate()
     {
@@ -139,7 +184,7 @@ public class NetworkManager : MonoBehaviour
                     FeedbackManager.Instance.CreateFeedBack("New user connected: " + m.GetString(0),
                         FeedbackType.INFORMATION);
                     break;
-                
+
                 #region Woz Room : ADMIN & USER
                 case "AskForUserInformation":
                     _pioconnectionWoz.Send("SendUserInfos", IsAdmin);
@@ -163,7 +208,7 @@ public class NetworkManager : MonoBehaviour
                     {
                         throw new Exception("Admin got an order of AvatarBlendShapesTransition");
                     }
-                    MainManager.Instance.BlendShapesController.TransitionToDict(JsonConvert.DeserializeObject<Dictionary<string, double>>(m.GetString(0)), 
+                    MainManager.Instance.BlendShapesController.TransitionToDict(JsonConvert.DeserializeObject<Dictionary<string, double>>(m.GetString(0)),
                         m.GetFloat(1));
                     break;
                 case "AvatarPoseTransition":
@@ -171,7 +216,7 @@ public class NetworkManager : MonoBehaviour
                     {
                         throw new Exception("Admin got an order of AvatarPoseTransition");
                     }
-                    MainManager.Instance.HeadPoseController.MakeRotTransition(JsonConvert.DeserializeObject<Vector3>(m.GetString(0)), 
+                    MainManager.Instance.HeadPoseController.MakeRotTransition(JsonConvert.DeserializeObject<Vector3>(m.GetString(0)),
                         m.GetFloat(1));
                     break;
                 #endregion
@@ -203,7 +248,7 @@ public class NetworkManager : MonoBehaviour
                         , FeedbackType.ERROR);
                     break;
                 case "RoomAvailabilityChanged":
-                    FeedbackManager.Instance.CreateFeedBack("Room availability successfully changed", 
+                    FeedbackManager.Instance.CreateFeedBack("Room availability successfully changed",
                         FeedbackType.SUCCESS);
                     break;
                 case "RoomAvailabilityNotChanged":
@@ -216,19 +261,19 @@ public class NetworkManager : MonoBehaviour
                 #endregion
             }
         }
-        
+
         _msgList.Clear();
     }
-    
+
     // Handle server messages
     public void HandleMessage(object sender, Message m) {
         _msgList.Add(m);
     }
-    
+
     private void ConnectToRoom(string roomName, string roomType)
     {
         PlayerIO.Authenticate(
-            "avatar-controller-toolkit-8g1b8uczeowj6ffvawksg",            //ID provided by the Numediart's Player.io account
+            "act-i1npa6ywesmm33kf7hwmq",            //ID provided by the Numediart's Player.io account
             "public",                               //Your connection id
             new Dictionary<string, string> {        //Authentication arguments
                 { "userId", UserId },
@@ -237,21 +282,8 @@ public class NetworkManager : MonoBehaviour
             delegate (Client client) {
                 Debug.Log("Successfully connected to Player.IO");
 
-                Debug.Log("Create ServerEndpoint");
-                // Comment out the line below to use the live servers instead of your development server
-                switch (_networkMode)
-                {
-                    case NetworkMode.LOCAL:
-                        client.Multiplayer.DevelopmentServer = new ServerEndpoint("localhost", 8184);
-                        break;
-                    case NetworkMode.ONLINE:
-                        break;
-                    case NetworkMode.OFFLINE:
-                        throw new Exception("Network mode set to offline");
-                }
-
                 Debug.Log("CreateJoinRoom");
-                //Create or join the room 
+                //Create or join the room
                 client.Multiplayer.CreateJoinRoom(
                     roomName,                    //Room id. If set to null a random roomid is used
                     roomType,                   //The room type started on the server
@@ -274,7 +306,7 @@ public class NetworkManager : MonoBehaviour
                         {
                             throw new Exception("Unknown room type: " + roomType);
                         }
-                        
+
                         FeedbackManager.Instance.CreateFeedBack("Successfully joined room " + roomName, FeedbackType.SUCCESS);
                     },
                     delegate (PlayerIOError error) {
@@ -299,12 +331,12 @@ public class NetworkManager : MonoBehaviour
     {
         _pioconnectionRoom.Send("RoomCreationRequest", roomId, roomPassword);
     }
-    
+
     public void UserSelectedView(bool isAdminView)
     {
         _pioconnectionWoz.Send("ChoosedView", isAdminView);
     }
-    
+
     public void AvatarHeadMoved(double poseRx, double poseRy, double poseRz)
     {
         if (!IsAdmin)
@@ -331,7 +363,7 @@ public class NetworkManager : MonoBehaviour
         {
             throw new Exception("Non-admin could send avatar transition");
         }
-        
+
         _pioconnectionWoz.Send("AvatarBlendShapesTransition", changesDict, durationInSeconds);
     }
 
@@ -343,13 +375,13 @@ public class NetworkManager : MonoBehaviour
         }
         _pioconnectionWoz.Send("AvatarPoseTransition", newRot, durationInSeconds);
     }
-    
+
     public void DisconnectFromRoomEvent()
     {
         _pioconnectionWoz.Disconnect();
-        
+
         _pioconnectionRoom.Send("PlayerDisconnected", CurrentRoomId, IsAdmin);
-        
+
         _menuManager.LoadRoomSelectionScene();
 
         // Erase user infos
@@ -363,7 +395,7 @@ public class NetworkManager : MonoBehaviour
         {
             throw new Exception("Non-Admin could send password modif request");
         }
-        
+
         _pioconnectionRoom.Send("PasswordModificationRequest", CurrentRoomId, oldPassword, newPassword);
     }
 
@@ -373,8 +405,8 @@ public class NetworkManager : MonoBehaviour
         {
             throw new Exception("Non-Admin could change room availability");
         }
-        
-        _pioconnectionRoom.Send("ChangeRoomAvailability", CurrentRoomId, isRoomAvailable);   
+
+        _pioconnectionRoom.Send("ChangeRoomAvailability", CurrentRoomId, isRoomAvailable);
     }
 
     public void RequestRoomInfos()
@@ -386,11 +418,11 @@ public class NetworkManager : MonoBehaviour
     {
         if (_pioconnectionWoz != null)
             _pioconnectionWoz.Disconnect();
-        
+
         if (_pioconnectionRoom != null)
             _pioconnectionRoom.Disconnect();
     }
-    
+
     public void ConnectToRoomSelection()
     {
         ConnectToRoom(_mainRoomId, _roomSelectionType);
@@ -406,13 +438,13 @@ public class NetworkManager : MonoBehaviour
         _pioconnectionRoom.Send("AdminJoinedRoom", roomName);
 
         ConnectToRoom(roomName, _wozRoomType);
-        
+
         // Update user infos
         IsAdmin = true;
         CurrentRoomId = roomName;
-        
+
         _roomManager.ResetRoomsDict();
-        
+
         _menuManager.LoadAdminScene();
     }
 
@@ -421,13 +453,13 @@ public class NetworkManager : MonoBehaviour
         _pioconnectionRoom.Send("UserJoinedRoom", roomName);
 
         ConnectToRoom(roomName, _wozRoomType);
-        
+
         // Update user infos
         IsAdmin = false;
         CurrentRoomId = roomName;
 
         _roomManager.ResetRoomsDict();
-        
+
         _menuManager.LoadUserScene();
     }
 
@@ -441,10 +473,10 @@ public class NetworkManager : MonoBehaviour
     {
         _roomManager.CreateNewRoom(roomName);
         _roomManager.HideRoomCreationMenu();
-        
+
         FeedbackManager.Instance.CreateFeedBack("Room successfully created", FeedbackType.SUCCESS);
     }
-    
+
     private void RefuseMyRoomCreation()
     {
         FeedbackManager.Instance.CreateFeedBack("Room couldn't be added", FeedbackType.ERROR);
@@ -455,6 +487,7 @@ public class NetworkManager : MonoBehaviour
         _roomManager.CreateNewRoom(roomName);
         FeedbackManager.Instance.CreateFeedBack("New room added: " + roomName, FeedbackType.INFORMATION);
     }
-    
+
     #endregion
+    */
 }

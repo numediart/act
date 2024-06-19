@@ -23,4 +23,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/_Ver 1.0 - User.unity
     guid: 3705c73be07b62741b323101b6efebe6
+  - enabled: 1
+    path: Assets/Scenes/_Ver1.0 - LiveStream With LipSync.unity
+    guid: 5960c230ff8e64a4f9b1e5fbf4e32768
   m_configObjects: {}
