@@ -42,6 +42,10 @@ public class MenuManager : MonoBehaviour
         SceneManager.LoadScene("_Ver1.0 - LiveStream With LipSync");
         NetworkManager.Instance.CreateLiveStreamingRoom("LiveStreamRoom", "password");
     }
+    public void LoadLiveRoomSelectionScene()
+    {
+        SceneManager.LoadScene("_Ver 1.0 - Room Live Selection");
+    }
 
     public void LoadRoomSelectionSceneFromMenu()
     {
