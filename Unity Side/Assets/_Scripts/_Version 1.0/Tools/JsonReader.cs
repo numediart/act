@@ -100,7 +100,7 @@ public class JsonReader : MonoBehaviour
 
     #endregion
 
-    #region Blend Shapes Json acitons
+    #region Blend Shapes Json actions
 
     public Dictionary<string, double> GetCopyOfCleanBlendShapesDict()
     {

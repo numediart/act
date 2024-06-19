@@ -47,5 +47,5 @@ public class Frame
 
     /// TODO
     /// Put the SegmentedAudio Array in this class (maybe not)
-    //public float AudioData;
+    //public float[] AudioData;//
 }

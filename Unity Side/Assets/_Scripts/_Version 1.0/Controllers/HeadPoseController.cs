@@ -148,17 +148,17 @@ public class HeadPoseController : MonoBehaviour
     // Used by Admin, will be sent to User
     private void MakeServerRequestForHeadPose(Dictionary<string, double> newPose)
     {
-        if (MainManager.Instance.NetworkMode != NetworkMode.OFFLINE)
+      /*  if (MainManager.Instance.NetworkMode != NetworkMode.OFFLINE)
         {
             // Server request
             NetworkManager.Instance.AvatarHeadMoved(newPose["pose_Rx"], newPose["pose_Ry"], newPose["pose_Rz"]);
-        }
+        }*/
     }
 
     private void SendHeadPoseTransitionToUser(Vector3 futureRot, float transitionDuration)
     {
-        if (MainManager.Instance.NetworkMode != NetworkMode.OFFLINE)
-            NetworkManager.Instance.AvatarPoseTransitionToNewFrame(JsonConvert.SerializeObject(futureRot), transitionDuration);
+        /*if (MainManager.Instance.NetworkMode != NetworkMode.OFFLINE)
+            NetworkManager.Instance.AvatarPoseTransitionToNewFrame(JsonConvert.SerializeObject(futureRot), transitionDuration);*/
     }
     
     #endregion

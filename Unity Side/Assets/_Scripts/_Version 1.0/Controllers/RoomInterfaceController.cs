@@ -28,7 +28,7 @@ public class RoomInterfaceController : MonoBehaviour
     {
         if (_isAdminSide)
         {
-            NetworkManager.Instance.RequestRoomInfos();
+            //NetworkManager.Instance.RequestRoomInfos();
             ResetInputs();
         }
     }
@@ -65,14 +65,14 @@ public class RoomInterfaceController : MonoBehaviour
     public void DisconnectFromRoom()
     {
         //Call network manager event
-        NetworkManager.Instance.DisconnectFromRoomEvent();
+       // NetworkManager.Instance.DisconnectFromRoomEvent();
     }
 
     #region Room Modification with server call
     private void ToggleRoomAvailabilityForServer()
     {
         //Call network manager event to modify room
-        NetworkManager.Instance.ChangeRoomAvailabilityEvent(_isRoomAvailable);
+      //  NetworkManager.Instance.ChangeRoomAvailabilityEvent(_isRoomAvailable);
     }
 
     public void ModifyRoomPassword()
@@ -80,7 +80,7 @@ public class RoomInterfaceController : MonoBehaviour
         if (_newPasswordInput == _confirmNewPasswordInput)
         {
             // Call Network Manager event to modify room
-            NetworkManager.Instance.RequestRoomPasswordModification(_oldPasswordInput, _newPasswordInput);
+      //      NetworkManager.Instance.RequestRoomPasswordModification(_oldPasswordInput, _newPasswordInput);
         }
         else
         {
