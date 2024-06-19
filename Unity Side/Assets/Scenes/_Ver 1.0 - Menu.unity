@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.3069224, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1699,7 +1699,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5713991412155454435, guid: 515eb8c8557c6cb4e81851fb889bfe06, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: LoadLiveScene
+      value: LoadLiveRoomSelectionScene
       objectReference: {fileID: 0}
     - target: {fileID: 5713991412550641550, guid: 515eb8c8557c6cb4e81851fb889bfe06, type: 3}
       propertyPath: m_Name

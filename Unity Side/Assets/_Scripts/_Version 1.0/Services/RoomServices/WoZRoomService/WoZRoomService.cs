@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 namespace _Scripts._Version_1._0.Services.RoomServices.WoZRoomService
 {
@@ -38,6 +40,10 @@ namespace _Scripts._Version_1._0.Services.RoomServices.WoZRoomService
             MainManager.Instance.HeadPoseController.MakeRotTransition(data, duration);
         }
         
+        public void OnRoomCreated(string data)
+        {
+            
+        }
         
 
         

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using _Scripts._Version_1._0;
 using _Scripts._Version_1._0.Controllers.RoomController;
 using _Scripts._Version_1._0.Managers.Network.WebSocket;
 using _Scripts._Version_1._0.Managers.Network.WebSocket.Enum;
@@ -51,7 +52,7 @@ public class NetworkManager : MonoBehaviour
     #region Intern Variables
     // References
     private MenuManager _menuManager;
-    private RoomManager _roomManager;
+    private WoZRoomManager _roomManager;
 
     
     // Room Types
@@ -80,7 +81,7 @@ public class NetworkManager : MonoBehaviour
         {
             try
             {
-                _roomManager = GameObject.Find(RoomManagerIdentifier).GetComponent<RoomManager>();
+                _roomManager = GameObject.Find(RoomManagerIdentifier).GetComponent<WoZRoomManager>();
             }
             catch (Exception e)
             {
