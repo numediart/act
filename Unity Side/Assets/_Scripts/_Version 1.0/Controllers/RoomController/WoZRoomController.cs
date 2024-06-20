@@ -35,7 +35,7 @@ namespace _Scripts._Version_1._0.Controllers.RoomController
         
         protected override void OnRoomCreated(string data)
         {
-            throw new System.NotImplementedException();
+            _woZRoomService.OnRoomCreated(data);
         }
 
         protected override void OnRoomJoined(string data)
