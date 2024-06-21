@@ -40,7 +40,7 @@ namespace _Scripts._Version_1._0.Controllers.RoomController
 
         protected override void OnRoomJoined(string data)
         {
-            throw new System.NotImplementedException();
+            _woZRoomService.OnRoomJoined(data);
         }
 
         protected override void OnRoomLeft(string data)

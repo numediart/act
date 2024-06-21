@@ -45,6 +45,11 @@ namespace _Scripts._Version_1._0.Services.RoomServices.WoZRoomService
             
         }
         
+        public void OnRoomJoined(string data)
+        {
+            
+        }
+        
 
         
     }
