@@ -182,6 +182,7 @@
         <Compile Include="DataDescriptorClass\BaseRoomEventData.cs" />
         <Compile Include="DataDescriptorClass\LiveStreamingData.cs" />
         <Compile Include="DataDescriptorClass\AbstractRoomEventData.cs" />
+        <Compile Include="DataDescriptorClass\RoomInfo.cs" />
         <Compile Include="DataDescriptorClass\WebsocketMessage.cs" />
         <Compile Include="DataDescriptorClass\WoZData.cs" />
         <Compile Include="Enum\EnumBlendShape.cs" />

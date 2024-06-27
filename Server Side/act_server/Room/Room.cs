@@ -25,10 +25,15 @@ public abstract class Room: IDisposable
     {
         get => _roomId;
     }
+
+
+    public List<Client.Client> Clients => _clients;
     
-
-    public List<Client.Client> Clients { get; }
-
+    public bool HasPassword()
+    {
+        return _password != null;
+    }
+    
     public override string ToString()
     {
         return _roomId.ToString();

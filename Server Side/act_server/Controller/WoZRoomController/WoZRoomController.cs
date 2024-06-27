@@ -41,6 +41,8 @@ namespace act_server.Controller.WoZRoomController
             PEventManagerService.On(EnumEvents.RequestWoZRoomBroadcast.Name, OnRequestRoomBroadcast);
             PEventManagerService.On(EnumEvents.RequestPasswordChange.Name, OnRequestPasswordChange);
             PEventManagerService.On(EnumEvents.RequestRoomInfo.Name, OnRequestRoomInfo);
+            PEventManagerService.On(EnumEvents.RequestWoZRooms.Name, OnRequestWoZRoomInfos);
+            
             PEventManagerService.On(EnumEvents.RequestAvatarHeadMove.Name, OnRequestAvatarHeadMove);
             PEventManagerService.On(EnumEvents.RequestAvatarBlendshapeMove.Name, OnRequestAvatarBlendshapeMove);
             PEventManagerService.On(EnumEvents.RequestAvatarBlendshapeTransition.Name,
@@ -50,6 +52,8 @@ namespace act_server.Controller.WoZRoomController
 
         #endregion
 
+        
+     
         /// <summary>
         /// Process the request to create a room
         /// </summary>
@@ -61,6 +65,7 @@ namespace act_server.Controller.WoZRoomController
             try
             {
                 RoomCreationData roomCreationData = JsonConvert.DeserializeObject<RoomCreationData>(data);
+                PLogger.LogInformation("Room creation data: {0}", roomCreationData);
                 if (roomCreationData.Equals(null))
                 {
                     PLogger.LogError("Room creation data is null.");
@@ -76,7 +81,11 @@ namespace act_server.Controller.WoZRoomController
                 PLogger.LogError(ex, "Error processing room creation request.");
             }
         }
-
+        public struct RoomJoinData
+        {
+            public string RoomId;
+            public string Password;
+        }
         /// <summary>
         ///  Process the request to join a room 
         /// </summary>
@@ -88,14 +97,14 @@ namespace act_server.Controller.WoZRoomController
 
             try
             {
-                dynamic roomJoinData = JsonConvert.DeserializeObject(data);
-                if (roomJoinData == null)
+                RoomJoinData roomJoinData = JsonConvert.DeserializeObject<RoomJoinData>(data);
+                if (roomJoinData.Equals(null))
                 {
                     PLogger.LogError("Room join data is null.");
                     return;
                 }
 
-                PRoomService.OnRequestRoomJoin(roomJoinData.roomId, clientId, roomJoinData.password);
+                PRoomService.OnRequestRoomJoin(roomJoinData.RoomId, clientId, roomJoinData.Password);
             }
             catch (Exception ex)
             {
@@ -192,6 +201,21 @@ namespace act_server.Controller.WoZRoomController
                 PLogger.LogError(ex, "Error processing room info request.");
             }
         }
+        
+        private void OnRequestWoZRoomInfos(string data, string clientId)
+        {
+            if (PLogger == null || PRoomService == null) return;
+
+            try
+            {
+                PRoomService.OnRequestWoZRoomInfos(clientId);
+            }
+            catch (Exception ex)
+            {
+                PLogger.LogError(ex, "Error processing Wizard of Oz room infos request.");
+            }
+        
+        }
 
         private void OnRequestAvatarHeadMove(string data, string clientId)
         {
@@ -200,7 +224,7 @@ namespace act_server.Controller.WoZRoomController
             try
             {
                 var avatarHeadMoveData = JsonConvert.DeserializeObject<WoZAvatarHeadMoveData>(data);
-                if (avatarHeadMoveData == null)
+                   if (avatarHeadMoveData == null)
                 {
                     PLogger.LogError("Avatar head move data is null.");
                     return;
@@ -243,8 +267,10 @@ namespace act_server.Controller.WoZRoomController
 
             try
             {
+                PLogger.LogInformation("Avatar blendshape transition data: {0}", data);
                 var avatarBlendshapeTransitionData =
                     JsonConvert.DeserializeObject<WoZAvatarBlendshapeTransitionData>(data);
+                PLogger.LogInformation("Avatar blendshape transition data: {0}", avatarBlendshapeTransitionData);
                 if (avatarBlendshapeTransitionData == null)
                 {
                     PLogger.LogError("Avatar blendshape transition data is null.");
@@ -252,7 +278,8 @@ namespace act_server.Controller.WoZRoomController
                 }
 
                 PRoomService.OnRequestAvatarBlendshapeTransition(avatarBlendshapeTransitionData.RoomId, clientId,
-                    avatarBlendshapeTransitionData.BlendshapeTransitionData);
+                    new AvatarBlendshapeTransitionData(avatarBlendshapeTransitionData.BlendshapeTransitionData, "",
+                        avatarBlendshapeTransitionData.Duration));
             }
             catch (Exception ex)
             {
@@ -266,7 +293,9 @@ namespace act_server.Controller.WoZRoomController
 
             try
             {
+                PLogger.LogInformation("Avatar pose transition data: {0}", data);
                 var avatarPoseTransitionData = JsonConvert.DeserializeObject<WoZAvatarPoseTransitionData>(data);
+                PLogger.LogInformation("Avatar pose transition data: {0}", avatarPoseTransitionData.PoseTransitionData.x);
                 if (avatarPoseTransitionData == null)
                 {
                     PLogger.LogError("Avatar pose transition data is null.");

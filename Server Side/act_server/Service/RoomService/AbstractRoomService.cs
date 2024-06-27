@@ -11,7 +11,7 @@ public struct RoomCreationData
     public RoomCreationData(string? roomName, string? roomOwner, string? password)
     {
         RoomName = roomName;
-        RoomOwner = roomOwner;
+        RoomOwner = roomOwner ?? null;
         Password = password;
     }
 }

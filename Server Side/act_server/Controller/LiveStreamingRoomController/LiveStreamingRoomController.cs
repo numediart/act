@@ -36,9 +36,10 @@ public sealed class LiveStreamingRoomController
         if (PLogger != null) PLogger.LogInformation("Registering events");
         if (PEventManagerService == null) throw new Exception("EventManagerService is null");
         PEventManagerService.On(EnumEvents.RequestLiveStreamingRoom.Name, OnRequestRoomCreate);
-        PEventManagerService.On(EnumEvents.RequestRoomJoin.Name, OnRequestRoomJoin);
+        PEventManagerService.On(EnumEvents.RequestLiveStreamingRoomJoin.Name, OnRequestRoomJoin);
         PEventManagerService.On(EnumEvents.RequestPasswordChange.Name, OnRequestPasswordChange);
         PEventManagerService.On(EnumEvents.RequestRoomInfo.Name, OnRequestRoomInfo);
+        PEventManagerService.On(EnumEvents.RequestLiveStreamingRooms.Name, OnRequestLiveStreamRoomInfos);
 
         PEventManagerService.On(EnumEvents.EmitActionUnit.Name, OnActionUnitData);
         PEventManagerService.On(EnumEvents.EmitAudioData.Name, OnAudioData);
@@ -67,6 +68,11 @@ public sealed class LiveStreamingRoomController
         }
     }
 
+    public struct RequestRoomJoinData
+    {
+        public string RoomId;
+        public string Password;
+    }
     /// <summary>
     ///  Process the request to join a room 
     /// </summary>
@@ -78,14 +84,10 @@ public sealed class LiveStreamingRoomController
 
         try
         {
-            dynamic roomJoinData = JsonConvert.DeserializeObject(data);
-            if (roomJoinData == null)
-            {
-                PLogger.LogError("Room join data is null.");
-                return;
-            }
+            RequestRoomJoinData roomJoinData = JsonConvert.DeserializeObject<RequestRoomJoinData>(data);
+        
 
-            PRoomService.OnRequestRoomJoin(roomJoinData.roomId, clientId, roomJoinData.password);
+            PRoomService.OnRequestRoomJoin(roomJoinData.RoomId, clientId, roomJoinData.Password);
         }
         catch (Exception ex)
         {
@@ -181,6 +183,21 @@ public sealed class LiveStreamingRoomController
         {
             PLogger.LogError(ex, "Error processing room info request.");
         }
+    }
+
+    private void OnRequestLiveStreamRoomInfos(string data, string clientId)
+    {
+        if (PLogger == null || PRoomService == null) return;
+
+        try
+        {
+            PRoomService.OnRequestLiveStreamRoomInfos(clientId);
+        }
+        catch (Exception ex)
+        {
+            PLogger.LogError(ex, "Error processing live stream room infos request.");
+        }
+        
     }
 
     private void OnActionUnitData(string data, string clientId)

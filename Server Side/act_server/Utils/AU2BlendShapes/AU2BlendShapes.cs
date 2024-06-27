@@ -16,9 +16,13 @@ namespace act_server.Utils.AU2BlendShapes
         private Dictionary<BlendShape, float> _blendshapeDictNew;
         private Dictionary<BlendShape, float> _blendshapeDict;
         ILogger<MainWebSocketService> _logger;
+        private double frame;
+        private double timestamp;
         public AU2BlendShapes(IncomingData incomingData)
         {
             _actionUnits = ParsePayload(incomingData);
+            frame = incomingData.frame;
+            timestamp = incomingData.timestamp;
         }
 
 
@@ -328,7 +332,7 @@ namespace act_server.Utils.AU2BlendShapes
 
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(new {_actionUnits});
+            return JsonConvert.SerializeObject(new {_actionUnits, frame, timestamp});
         }
     }
 }

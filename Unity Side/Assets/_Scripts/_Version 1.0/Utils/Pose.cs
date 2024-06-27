@@ -8,5 +8,7 @@
         public float pose_Rx { get; set; }
         public float pose_Ry { get; set; }
         public float pose_Rz { get; set; }
+        public double frame;
+        public double timestamp;
     }
 }

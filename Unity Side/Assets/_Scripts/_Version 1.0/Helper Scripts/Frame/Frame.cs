@@ -24,6 +24,7 @@ public class Frame
     /// </summary>
     public Dictionary<string, double> ActionUnitDict = new Dictionary<string, double>();
 
+    public Dictionary<string,List<BlendShapeList>> BlendShapeDict = new Dictionary<string, List<BlendShapeList>>();
     /// <summary>
     /// The PoseDict works almost the same as the ActionUnitDict except it's for the pose of the head such as
     /// pose_rx, pose_rz, pose_ry

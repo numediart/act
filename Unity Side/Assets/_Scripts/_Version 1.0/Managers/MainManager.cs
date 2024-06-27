@@ -8,6 +8,7 @@ using UnityEngine.Serialization;
 public class MainManager : MonoBehaviour
 {
     #region Singleton
+
     public static MainManager Instance;
 
     private void Awake()
@@ -15,27 +16,27 @@ public class MainManager : MonoBehaviour
         if (Instance == null)
             Instance = this;
     }
+
     #endregion
 
     #region Public Fields
+
     [Header("Managers")] public UserInterfaceManager UIManager;
-    
-    [Header("Tools")] 
-    public CsvReader CsvReader;
+
+    [Header("Tools")] public CsvReader CsvReader;
     public JsonReader JsonReader;
 
-    [Header("Controllers")] 
-    public BlendShapesController BlendShapesController;
+    [Header("Controllers")] public BlendShapesController BlendShapesController;
     public HeadPoseController HeadPoseController;
     public AudioController AudioController;
     public VideoCaptureCtrl VideoCaptureCtrlRef;
 
     // make those serializable ?
-    [Header("Actions")] 
-    public AvatarActionGroupList avatarActionGroupList;
+    [Header("Actions")] public AvatarActionGroupList avatarActionGroupList;
     public AvatarActionQueue ActionQueue;
 
     [Header("Parameters")] public NetworkMode NetworkMode;
+
     #endregion
 
     #region Private Fields
@@ -47,7 +48,7 @@ public class MainManager : MonoBehaviour
     [SerializeField] private float _transitionDuration;
     [SerializeField] private bool _isOn = false;
     [SerializeField] private bool _fullExpressionOn;
-    
+
     #endregion
 
     #region Getters
@@ -64,14 +65,14 @@ public class MainManager : MonoBehaviour
     {
         // Tools
         JsonReader.InitByMainManager();
-        
+
         // Avatar configuration
         _avatarConfiguration = JsonReader.CreateAvatarConfigByConfigFile();
         _transitionDuration = _avatarConfiguration.TransitionDelay;
         HeadPoseController.HeadRotCorrection = _avatarConfiguration.HeadRotCorrection;
         HeadPoseController.NeckRotCorrection = _avatarConfiguration.NeckRotCorrection;
         _fullExpressionOn = _avatarConfiguration.FullExpressionOn;
-        
+
         // Managers
         if (UIManager != null)
             UIManager.Init();
@@ -81,7 +82,7 @@ public class MainManager : MonoBehaviour
         HeadPoseController.Init();
         if (AudioController != null)
             AudioController.Init();
-        
+
         // Helpers
         avatarActionGroupList.Init();
         ActionQueue = new AvatarActionQueue();
@@ -122,7 +123,7 @@ public class MainManager : MonoBehaviour
         else
         {
             _isOn = false;
-            
+
             if (_currentAvatarAction != null && _currentAvatarAction.ContainsAudio)
                 AudioController.PauseAudioClip();
         }
@@ -136,19 +137,20 @@ public class MainManager : MonoBehaviour
 
         _isRecording = true;
 
-        StartRecordingAsync(); 
+        StartRecordingAsync();
     }
-    
+
     #region Record Manager
+
     private async Task StartRecordingAsync()
     {
         if (ActionQueue.GetCurrentAvatarAction() == null)
             return;
-        
+
         UIManager.ToggleAdminHudVisibility();
-        
+
         await VideoCaptureCtrlRef.StartCapture();
-        
+
         StartAvatarActionQueueExecution();
     }
 
@@ -157,13 +159,14 @@ public class MainManager : MonoBehaviour
         await VideoCaptureCtrlRef.StopCapture();
 
         _isRecording = false;
-        
+
         UIManager.ToggleAdminHudVisibility();
-        
+
         UIManager.NoCurrentActionEvent();
     }
+
     #endregion
-    
+
     private void StartAvatarActionQueueExecution()
     {
         UpdateCurrentAvatarAction();
@@ -178,28 +181,27 @@ public class MainManager : MonoBehaviour
     public void SkipToNextAction()
     {
         FinishCurrentActionIfNotNull();
-        
+
         ForceActionEndBySkip(true);
     }
-    
+
     // Used as a listener of button in UI
     public void BackToLastAction()
     {
         FinishCurrentActionIfNotNull();
-        
+
         ForceActionEndBySkip(false);
     }
-    
+
     private void FinishCurrentActionIfNotNull()
     {
         if (_currentAvatarAction != null)
             _currentAvatarAction.ForceFinish();
     }
-    
+
     private void UpdateCurrentAvatarAction()
     {
         _currentAvatarAction = ActionQueue.GetCurrentAvatarAction();
-        
         if (_currentAvatarAction != null)
         {
             PrepareAction(_currentAvatarAction);
@@ -222,24 +224,42 @@ public class MainManager : MonoBehaviour
     private void PrepareAction(AvatarAction action)
     {
         Application.targetFrameRate = action.FrameManager.Fps;
-        
+
         if (!_fullExpressionOn)
             action.FrameManager.SkipFramesForTransition();
     }
-    
+
     private void ExecuteActionForCurrentFrame(AvatarAction action)
     {
         Frame frameExecuted = action.ActionFrameList.Frames[action.FrameManager.FrameNb];
+        Frame poseFrameExecuted = action.PoseFrameList?.Frames[action.FrameManager.FrameNb];
 
         // Audio
         if (action.ContainsAudio && action.FrameManager.FrameNb == 0)
         {
             AudioController.PlayAudioClip(action.Audio);
         }
-        
+
         // Visual
-        BlendShapesController.BlendShapeUpdateForFrame(frameExecuted);
-        HeadPoseController.HeadPoseUpdateByFrame(frameExecuted);
+
+        if (poseFrameExecuted?.PoseDict != null)
+        {
+            BlendShapesController.BlendshapeListUpdateForFrame(frameExecuted,
+                action.FrameManager.FrameNb != 0
+                    ? action.ActionFrameList.Frames[action.FrameManager.FrameNb - 1]
+                    : null);
+
+            HeadPoseController.HeadPoseUpdateByFrameAndPrevious(poseFrameExecuted,
+                action.FrameManager.PoseFrameNb != 0
+                    ? action.PoseFrameList.Frames[action.FrameManager.PoseFrameNb - 1]
+                    : null);
+        }
+
+        if (poseFrameExecuted?.PoseDict == null)
+        {
+            BlendShapesController.BlendShapeUpdateForFrame(frameExecuted);
+            HeadPoseController.HeadPoseUpdateByFrame(frameExecuted);
+        }
 
         // End
         if (!_fullExpressionOn)
@@ -252,29 +272,31 @@ public class MainManager : MonoBehaviour
     public void EndOfActionEvent()
     {
         ActionQueue.CurrentAvatarActionFinished();
-        
+
         if (_currentAvatarAction.ContainsAudio)
             AudioController.StopAudioClip();
 
         UpdateCurrentAvatarAction();
-        
+
         MakeTransitionBetweenActions();
     }
-    
+
     private void MakeTransitionBetweenActions()
     {
         if (_currentAvatarAction != null)
         {
             _isOn = false;
-
             Frame frameToBeExecutedNext;
-            
+            Frame poseFrameToBeExecutedNext;
             // if we just changed the action or we paused just before the end, we transition to the same frame we are at
-            if (_currentAvatarAction.FrameManager.FrameNb == 0 || 
+            if (_currentAvatarAction.FrameManager.FrameNb == 0 ||
                 _currentAvatarAction.FrameManager.FrameNb >= _currentAvatarAction.FrameManager.MaxFrameNb - 1)
             {
                 frameToBeExecutedNext =
                     _currentAvatarAction.ActionFrameList.Frames[_currentAvatarAction.FrameManager.FrameNb];
+
+                poseFrameToBeExecutedNext =
+                    _currentAvatarAction.PoseFrameList.Frames[_currentAvatarAction.FrameManager.PoseFrameNb];
             }
 
             // if we already passed the current frame we go to the next one
@@ -282,12 +304,14 @@ public class MainManager : MonoBehaviour
             {
                 frameToBeExecutedNext =
                     _currentAvatarAction.ActionFrameList.Frames[_currentAvatarAction.FrameManager.FrameNb + 1];
+
+                poseFrameToBeExecutedNext =
+                    _currentAvatarAction.PoseFrameList.Frames[_currentAvatarAction.FrameManager.PoseFrameNb + 1];
             }
-            
-            
+
             BlendShapesController.TransitionBetweenFrames(frameToBeExecutedNext, _transitionDuration);
-            HeadPoseController.TransitionToPoseOverTime(frameToBeExecutedNext.PoseDict, _transitionDuration);
-            
+            HeadPoseController.TransitionToPoseOverTime(poseFrameToBeExecutedNext.PoseDict, _transitionDuration);
+
             StartCoroutine(TransitionWaiter());
         }
     }
@@ -305,9 +329,9 @@ public class MainManager : MonoBehaviour
             ActionQueue.CurrentAvatarActionSkipped();
         else
             ActionQueue.CurrentAvatarActionBacked();
-        
+
         UpdateCurrentAvatarAction();
-        
+
         MakeTransitionBetweenActions();
     }
 
@@ -319,28 +343,28 @@ public class MainManager : MonoBehaviour
     {
         for (int i = 0; i < avatarActionGroupList.AvatarActionGroups.Count; i++)
         {
-            UIManager.CreateActionGroupInControls(avatarActionGroupList.AvatarActionGroups[i].Name, 
+            UIManager.CreateActionGroupInControls(avatarActionGroupList.AvatarActionGroups[i].Name,
                 avatarActionGroupList.AvatarActionGroups[i].AvatarActions.Count, i);
         }
     }
-    
+
     public void AvatarActionSelected(int index, int nbIntensities)
     {
         _currentAvatarActionGroupSelected = avatarActionGroupList.AvatarActionGroups[index];
-        
+
         UIManager.LoadIntensitiesForActionGroup(nbIntensities);
     }
 
     public void AvatarActionIntensitySelected(int intensityId)
     {
         //We have a current action selected and intensity, we can add the action to queue
-        
+
         ActionQueue.AddActionToQueue(_currentAvatarActionGroupSelected.AvatarActions[intensityId]);
-        
+
         UIManager.CreateActionInQueue(_currentAvatarActionGroupSelected.Name, intensityId + 1);
 
         _currentAvatarActionGroupSelected = null;
-        
+
         UIManager.HideAllIntensities();
     }
 
@@ -348,33 +372,33 @@ public class MainManager : MonoBehaviour
     public void CancelAvatarAction()
     {
         _currentAvatarActionGroupSelected = null;
-        
+
         UIManager.HideAllIntensities();
     }
 
     public void ActionDeletedFromQueueEvent(int actionIndex)
     {
         ActionQueue.RemoveActionFromQueueByIndex(actionIndex);
-        
+
         UIManager.DeleteActionInQueueByIndex(actionIndex);
-        
+
         UIManager.UpdateActionsInQueueFromIndex(actionIndex);
-        
+
         FeedbackManager.Instance.CreateFeedBack("Action Deleted", FeedbackType.SUCCESS);
     }
 
     #endregion
-    
+
     #region Joan's Parameters
 
     public void ResetAvatarToNeutralPosition()
     {
         if (_isOn)
             return;
-        
+
         BlendShapesController.MakeBlendShapesResetOverTime(_transitionDuration);
         HeadPoseController.MakePoseResetOverTime(_transitionDuration);
     }
-    
+
     #endregion
 }

@@ -16,7 +16,7 @@ public class BlendShapesController : MonoBehaviour
     /// You can edit this value using SkinnedMeshRenderer.SetBlendShapeWeight(index of blendshape, new float value of blendshape - from 1 to 100)
     /// </summary>
     [Header("Instances")] public SkinnedMeshRenderer SkinnedMeshRenderer;
-    
+
     /// <summary>
     /// The dictionary is used because we send the name of the blendshapes that need to move from openface's csv.
     /// Then, to modify the value, we need the index of the blendshape
@@ -26,33 +26,72 @@ public class BlendShapesController : MonoBehaviour
 
     // Tool
     private ConvertAUtoBlendShapes _convertAUtoBlendShapes;
+    
+    private Frame _previousFrame;
 
     public void Init()
     {
         _convertAUtoBlendShapes = new ConvertAUtoBlendShapes();
-        
+
         _avatarBlendShapesKeyAndIndexDict = new Dictionary<string, int>();
         for (int i = 0; i < SkinnedMeshRenderer.sharedMesh.blendShapeCount; i++)
         {
             _avatarBlendShapesKeyAndIndexDict.Add(SkinnedMeshRenderer.sharedMesh.GetBlendShapeName(i), i);
         }
     }
-    
+
+    public void BlendshapeListUpdateForFrame(Frame frame, Frame previousFrame)
+    {
+        
+        // convert blendshapes list to dictofblendshapes
+        Dictionary<string, List<BlendShapeList>> blendShapesDict = frame.BlendShapeDict;
+        
+        SkinnedMeshRenderer skinnedMeshRenderer = SkinnedMeshRenderer;
+
+        if (_previousFrame == null) _previousFrame = previousFrame; 
+        else
+        {
+            foreach (var blendShapeList in frame.BlendShapeDict)
+            {
+                var actionUnit = blendShapeList.Value;
+                var previousActionUnit = _previousFrame.BlendShapeDict[blendShapeList.Key];
+
+                foreach (var currentBlendShape in actionUnit)
+                {
+                    float difference =
+                        Mathf.Abs(previousActionUnit[actionUnit.IndexOf(currentBlendShape)]
+                            .Value - currentBlendShape.Value);
+                    if (difference < 0.1f) continue;
+
+                    int blendShapeIndex = skinnedMeshRenderer.sharedMesh.GetBlendShapeIndex(currentBlendShape.Key);
+                    if (blendShapeIndex != -1)
+                    {
+                        skinnedMeshRenderer.SetBlendShapeWeight(blendShapeIndex, currentBlendShape.Value * 60f);
+                        previousActionUnit[actionUnit.IndexOf(currentBlendShape)].Value =
+                            currentBlendShape.Value;
+                    }
+                }
+            }
+        }
+
+    }
+
     public void BlendShapeUpdateForFrame(Frame frame)
     {
-         Dictionary<string, double> changesDict = _convertAUtoBlendShapes.GetDictOfBlendShapesChangedInFrame(frame);
-         
-         ChangeBlendShapesByDict(changesDict);
+        Dictionary<string, double> changesDict = _convertAUtoBlendShapes.GetDictOfBlendShapesChangedInFrame(frame);
 
-         SendBlendShapesMovementToUser(changesDict);
+        ChangeBlendShapesByDict(changesDict);
+
+        SendBlendShapesMovementToUser(changesDict);
     }
-    
+
     public void ChangeBlendShapesByDict(Dictionary<string, double> dict)
     {
         foreach (var change in dict)
         {
-            
-            ChangeAvatarBlendShapeValue(_avatarBlendShapesKeyAndIndexDict[change.Key], change.Value * 20); // change.Value * by 20 because unity's blend shapes are between 0 and 100 and not 0 and 5
+            ChangeAvatarBlendShapeValue(_avatarBlendShapesKeyAndIndexDict[change.Key],
+                change.Value *
+                20); // change.Value * by 20 because unity's blend shapes are between 0 and 100 and not 0 and 5
         }
     }
 
@@ -60,7 +99,7 @@ public class BlendShapesController : MonoBehaviour
     public void MakeBlendShapesResetOverTime(float transitionDuration)
     {
         int blendShapeCount = SkinnedMeshRenderer.sharedMesh.blendShapeCount;
-        
+
         // Will launch 82 coroutines
         for (int i = 0; i < blendShapeCount; i++)
         {
@@ -76,11 +115,12 @@ public class BlendShapesController : MonoBehaviour
     /// <param name="transitionDuration">The duration of the transition in seconds.</param>
     public void TransitionBetweenFrames(Frame frame, float transitionDuration)
     {
-        Dictionary<string, double> futureChangesDict = _convertAUtoBlendShapes.GetDictOfBlendShapesChangedInFrame(frame);
-        
+        Dictionary<string, double> futureChangesDict =
+            _convertAUtoBlendShapes.GetDictOfBlendShapesChangedInFrame(frame);
+
         // Local
         TransitionToDict(futureChangesDict, transitionDuration);
-        
+
         // Server
         SendBlendShapesTransitionToUser(futureChangesDict, transitionDuration);
     }
@@ -99,9 +139,8 @@ public class BlendShapesController : MonoBehaviour
                 )
             );
         }
-
     }
-    
+
     /// <summary>
     /// Coroutine that gradually changes the value of a blend shape over time.
     /// </summary>
@@ -110,18 +149,19 @@ public class BlendShapesController : MonoBehaviour
     /// <param name="blendShapeIndex">The index of the blend shape to change.</param>
     /// <param name="duration">The duration of the transition in seconds.</param>
     /// <returns>An IEnumerator used for the coroutine execution.</returns>
-    private IEnumerator MakeBlendShapeChangeTowardValueOverTime(double startValue, double endValue, int blendShapeIndex, float duration)
+    private IEnumerator MakeBlendShapeChangeTowardValueOverTime(double startValue, double endValue, int blendShapeIndex,
+        float duration)
     {
         float timer = 0f;
         while (timer <= duration)
         {
-            ChangeAvatarBlendShapeValue(blendShapeIndex, 
-                Mathf.Lerp(float.Parse(startValue.ToString()), float.Parse(endValue.ToString()), 
-                timer/duration));
+            ChangeAvatarBlendShapeValue(blendShapeIndex,
+                Mathf.Lerp(float.Parse(startValue.ToString()), float.Parse(endValue.ToString()),
+                    timer / duration));
             timer += Time.deltaTime;
             yield return null;
         }
-        
+
         // Make sure the final value is the right one
         ChangeAvatarBlendShapeValue(blendShapeIndex, endValue);
     }
@@ -137,14 +177,15 @@ public class BlendShapesController : MonoBehaviour
     {
         // Serialize changes and send them to server
         // It is useful because you do 1 request per tab instead of 1 per pair of string and double in the changesDict
-    //    if (MainManager.Instance.NetworkMode != NetworkMode.OFFLINE)
-      //      NetworkManager.Instance.AvatarBlendShapesMoved(JsonConvert.SerializeObject(changesDict));
+        //    if (MainManager.Instance.NetworkMode != NetworkMode.OFFLINE)
+        NetworkManager.Instance.AvatarBlendShapesMoved(JsonConvert.SerializeObject(changesDict));
     }
 
     private void SendBlendShapesTransitionToUser(Dictionary<string, double> changesDict, float transitionDuration)
     {
-      //  if (MainManager.Instance.NetworkMode != NetworkMode.OFFLINE)
-     //       NetworkManager.Instance.AvatarBlendShapeTransitionToNewFrame(JsonConvert.SerializeObject(changesDict), transitionDuration);
+        //  if (MainManager.Instance.NetworkMode != NetworkMode.OFFLINE)
+        NetworkManager.Instance.AvatarBlendShapeTransitionToNewFrame(JsonConvert.SerializeObject(changesDict),
+            transitionDuration);
     }
 
     #endregion

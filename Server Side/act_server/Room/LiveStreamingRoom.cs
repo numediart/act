@@ -33,7 +33,7 @@ public class LiveStreamingRoom : Room
         long timeNowMs = unixTimeStampInTicks / (TimeSpan.TicksPerMillisecond / 10000); // 100ns
         return timeNowMs;
     }
-
+    
     public struct AudioData
     {
         public long timestamp;

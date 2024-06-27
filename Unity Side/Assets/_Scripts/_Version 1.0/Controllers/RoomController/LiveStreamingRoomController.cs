@@ -39,6 +39,7 @@ namespace _Scripts._Version_1._0.Controllers.RoomController
         protected override void OnRoomCreated(string data)
         {
             Debug.Log("Room Created , Data : " + data);
+            
         }
 
         protected override void OnRoomJoined(string data)
@@ -53,14 +54,12 @@ namespace _Scripts._Version_1._0.Controllers.RoomController
 
         private void OnActionUnitsReceived(string data)
         {
-            Debug.Log("Action Units Received , Data : " + data);
             _incomingLiveStreamData = JsonConvert.DeserializeObject<IncomingLiveStreamData>(data);
             _liveStreamingRoomService.OnActionUnitsReceived(_incomingLiveStreamData);
         }
 
         private void OnHeadPoseReceived(string data)
         {
-            Debug.Log("Head Pose Received , Data : " + data);
             var pose = JsonConvert.DeserializeObject<Pose>(data);
             _liveStreamingRoomService.OnHeadPoseReceived(pose);
         }

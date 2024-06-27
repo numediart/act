@@ -151,9 +151,9 @@ public class ActionConfigurationUiController : MonoBehaviour
                 FeedbackManager.Instance.CreateFeedBack("Csv file does not exist", FeedbackType.WARNING);
                 return false;
             }
-            if (Path.GetExtension(intensityEditor.CsvInput) != ".csv")
+            if (Path.GetExtension(intensityEditor.CsvInput) != ".json" || Path.GetExtension(intensityEditor.CsvInput) != ".csv")
             {
-                FeedbackManager.Instance.CreateFeedBack("Invalid file format : expected a .csv file", FeedbackType.WARNING);
+                FeedbackManager.Instance.CreateFeedBack("Invalid file format : expected a .json file", FeedbackType.WARNING);
                 return false;
             }
             

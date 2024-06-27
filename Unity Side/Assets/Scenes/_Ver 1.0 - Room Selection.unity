@@ -2252,9 +2252,9 @@ MonoBehaviour:
   _roomPrefab: {fileID: 5890372282411506777, guid: 83612748babc0804e9bd5e169aaed381, type: 3}
   _roomParent: {fileID: 18268788}
   _roomCreationGo: {fileID: 1381596349}
-  _roomNameInputField: {fileID: 0}
-  _roomPasswordInputField: {fileID: 0}
-  _roomConfPasswordInputField: {fileID: 0}
+  _roomNameInputField: {fileID: 8507644887676720742}
+  _roomPasswordInputField: {fileID: 271085859}
+  _roomConfPasswordInputField: {fileID: 1952311715}
   _keyToToggleRoomCreationMenu: 27
 --- !u!1 &1865337998
 GameObject:
@@ -2857,7 +2857,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1662422042}
   m_HandleRect: {fileID: 1662422041}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -3106,10 +3106,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1763740374}
-    - target: {fileID: 5521661013855402559, guid: 0f5e9ff8453b9ee4eab5ba042c8e52ab, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 5521661013855402559, guid: 0f5e9ff8453b9ee4eab5ba042c8e52ab, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: CreateRoom
@@ -3365,6 +3361,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 68aaf0b9f4df0a942a2f1af596f30dc2, type: 3}
+--- !u!114 &8507644887676720742 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8507644888667856311, guid: 68aaf0b9f4df0a942a2f1af596f30dc2, type: 3}
+  m_PrefabInstance: {fileID: 8507644887676720741}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2da0c512f12947e489f739169773d7ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

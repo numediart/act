@@ -42,6 +42,7 @@ public class WoZRoom:Room
             _logger.LogError("Client already in room");
         }
         _clients.Add(client);
+        client.RoomId = RoomId;
         _logger.LogInformation($"Client {client.ClientId} added to room {RoomId}");
     }
 

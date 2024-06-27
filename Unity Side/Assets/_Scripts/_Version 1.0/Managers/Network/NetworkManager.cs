@@ -15,6 +15,7 @@ using UnityEngine.Serialization;
 public class NetworkManager : MonoBehaviour
 {
     #region Singleton
+
     public static NetworkManager Instance;
 
     private void Awake()
@@ -29,38 +30,42 @@ public class NetworkManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
     #endregion
 
-    [Header("User")]
-    public string UserId;
+    [Header("User")] public string UserId;
     public bool IsAdmin;
     public string CurrentRoomId;
 
-    [Header("Parameters")] [SerializeField] private NetworkMode _networkMode;
+    [Header("Parameters")] [SerializeField]
+    private NetworkMode _networkMode;
 
     [Header("Menu Scene")] public string M_MenuManagerIdentifier;
-    
+
     [Header("Room Selection Scene")] public string RS_MenuManagerIdentifier;
     public string RoomManagerIdentifier;
-    
-    [Header("Admin or User Scene")]
-    public string RoomInterfaceControllerIdentifier;
+
+    [Header("Admin or User Scene")] public string RoomInterfaceControllerIdentifier;
 
     private RoomInterfaceController _roomInterfaceController;
-    
-    
+
+
     #region Intern Variables
+
     // References
     private MenuManager _menuManager;
     private WoZRoomManager _roomManager;
 
-    
+
     // Room Types
     private string _roomSelectionType = "Room_Selection";
     private string _wozRoomType = "Room_Wizard_Of_Oz";
-    
+
     // Room IDs
     private string _mainRoomId = "UMONS_Avatar_Lobby";
+
+    public static string currentRoomId;
+
     #endregion
 
     private void LookForScriptRefOnSceneChange(Scene scene, LoadSceneMode loadSceneMode)
@@ -69,7 +74,9 @@ public class NetworkManager : MonoBehaviour
         {
             try
             {
-                _menuManager = GameObject.Find(scene.name == "_Ver 1.0 - Menu" ? M_MenuManagerIdentifier : RS_MenuManagerIdentifier).GetComponent<MenuManager>();
+                _menuManager = GameObject
+                    .Find(scene.name == "_Ver 1.0 - Menu" ? M_MenuManagerIdentifier : RS_MenuManagerIdentifier)
+                    .GetComponent<MenuManager>();
             }
             catch (Exception e)
             {
@@ -107,13 +114,13 @@ public class NetworkManager : MonoBehaviour
     {
         // Toggle event when scene is changing
         SceneManager.sceneLoaded += LookForScriptRefOnSceneChange;
-        
+
         // Look for script ref in current scene
         LookForScriptRefOnSceneChange(SceneManager.GetActiveScene(), LoadSceneMode.Single);
 
         Application.runInBackground = true;
         WebsocketManager webSocketManager = WebsocketManager.Instance;
-        await  webSocketManager.Connect("ws://localhost:9001");
+        await webSocketManager.Connect("ws://localhost:9001");
         // User ID is the clientID 
     }
 
@@ -123,28 +130,54 @@ public class NetworkManager : MonoBehaviour
         // Send request to server
         await WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
         {
-            EventName = EnumEvents.RequestWoZRoomCreation.Name, Data = new { roomName = roomName, password = password }
+            EventName = EnumEvents.RequestWoZRoomCreation.Name, Data = new { RoomName = roomName, Password = password }
         }));
-        
     }
+
+    public async void JoinWoZRoom(string id, string password)
+    {
+        await WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
+        {
+            EventName = EnumEvents.RequestWoZRoomJoin.Name, Data = new { RoomId = id, Password = password }
+        }));
+    }
+
+    public async void GetWoZRooms()
+    {
+        // Send request to server
+        await WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
+        {
+            EventName = EnumEvents.RequestWoZRooms.Name, Data = new { }
+        }));
+    }
+
     public async void CreateLiveStreamingRoom(string roomName, [CanBeNull] string password)
     {
         // Send request to server
         await WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
         {
-            EventName = EnumEvents.RequestLiveStreamingRoom.Name, Data = new { roomName = roomName, password = password }
+            EventName = EnumEvents.RequestLiveStreamingRoom.Name,
+            Data = new { roomName = roomName, password = password }
         }));
     }
-    
-    public async void JoinRoom(string roomId, [CanBeNull] string password)
+
+    public async void GetLivestreamingRooms()
+    {
+        await WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
+        {
+            EventName = EnumEvents.RequestLiveStreamingRooms.Name, Data = new { }
+        }));
+    }
+
+    public async void JoinLiveStreamingRoom(string id, string password)
     {
         // Send request to server
         await WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
         {
-            EventName = EnumEvents.RequestRoomJoin.Name, Data = new { roomId = roomId, password = password }
+            EventName = EnumEvents.RequestLiveStreamingRoom.Name, Data = new { RoomId = id, Password = password }
         }));
     }
-    
+
     public async void RequestRoomInfo(string roomId)
     {
         // Send request to server
@@ -153,18 +186,106 @@ public class NetworkManager : MonoBehaviour
             EventName = EnumEvents.RequestRoomInfo.Name, Data = new { roomId = roomId }
         }));
     }
-    
+
     public async void RequestPasswordChange(string roomId, string oldPassword, string newPassword)
     {
         // Send request to server
         await WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
         {
-            EventName = EnumEvents.RequestPasswordChange.Name, Data = new { roomId = roomId, oldPassword = oldPassword, newPassword = newPassword }
+            EventName = EnumEvents.RequestPasswordChange.Name,
+            Data = new { roomId = roomId, oldPassword = oldPassword, newPassword = newPassword }
         }));
     }
-    
-    
-    
+
+    public struct AvatarHeadMoveData
+    {
+        public string roomId;
+        public double x;
+        public double y;
+        public double z;
+
+        public AvatarHeadMoveData(string roomId, double x, double y, double z)
+        {
+            this.roomId = roomId;
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        public object ToJson()
+        {
+            return new { roomId, x, y, z };
+        }
+    }
+
+    public async void AvatarHeadMoved(double poseRx, double poseRy, double poseRz)
+    {
+        // Send request to server
+        if (Instance.TryGetComponent<WoZRoom>(out var woZRoom) == false)
+            return;
+        woZRoom = Instance.GetComponent<WoZRoom>();
+        AvatarHeadMoveData data = new AvatarHeadMoveData(woZRoom.RoomId, poseRx, poseRy, poseRz);
+        Debug.Log(JsonConvert.SerializeObject(data.ToJson()));
+        Debug.Log(JsonConvert.SerializeObject(new
+        {
+            EventName = EnumEvents.RequestAvatarHeadMove.Name, Data = data.ToJson()
+        }));
+        WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
+        {
+            EventName = EnumEvents.RequestAvatarHeadMove.Name, Data = data.ToJson()
+        }));
+    }
+
+    public async void AvatarPoseTransitionToNewFrame(string newRot, float durationInSeconds)
+    {
+        if (Instance.TryGetComponent<WoZRoom>(out var woZRoom) == false)
+            return;
+        woZRoom = Instance.GetComponent<WoZRoom>();
+        WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
+        {
+            EventName = EnumEvents.RequestAvatarPoseTransition.Name,
+            Data = new
+            {
+                roomId = woZRoom.RoomId, AvatarPoseTransitionData = newRot, durationInSeconds = durationInSeconds
+            }
+        }));
+    }
+
+    public async void AvatarBlendShapesMoved(string dictOfBlendShapes)
+    {
+        if (Instance.TryGetComponent<WoZRoom>(out var woZRoom) == false)
+            return;
+        woZRoom = Instance.GetComponent<WoZRoom>();
+        WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
+        {
+            EventName = EnumEvents.RequestAvatarBlendshapeMove.Name,
+            Data = new { roomId = woZRoom.RoomId, BlendshapeDict = dictOfBlendShapes, Value = "" }
+        }));
+    }
+
+    public struct AvatarBlendshapeTransitionData
+    {
+        public string BlendshapeDict;
+        public string Value;
+        public string Duration;
+    }
+
+    public async void AvatarBlendShapeTransitionToNewFrame(string changesDict, float durationInSeconds)
+    {
+        if (Instance.TryGetComponent<WoZRoom>(out var woZRoom) == false)
+            return;
+        woZRoom  = Instance.GetComponent<WoZRoom>();
+        WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
+        {
+            EventName = EnumEvents.RequestAvatarBlendshapeTransition.Name,
+            Data = new
+            {
+                roomId = woZRoom.RoomId,
+                blendshapeTransitionData = new AvatarBlendshapeTransitionData
+                    { BlendshapeDict = changesDict, Value = changesDict, Duration = durationInSeconds.ToString() }
+            }
+        }));
+    }
 
 
 /*

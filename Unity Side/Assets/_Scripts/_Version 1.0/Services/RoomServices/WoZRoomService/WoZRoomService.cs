@@ -13,11 +13,6 @@ namespace _Scripts._Version_1._0.Services.RoomServices.WoZRoomService
     }
     public class WoZRoomService:AbstractRoomServices
     {
-     
-        private void RegisterEvents()
-        {
-            throw new System.NotImplementedException();
-        }
         
         public void OnAvatarHeadMove (AvatarHeadMoveData data)
         {
@@ -29,10 +24,10 @@ namespace _Scripts._Version_1._0.Services.RoomServices.WoZRoomService
             Dictionary<string,double> avatarBlendshapeData = data;
             MainManager.Instance.BlendShapesController.ChangeBlendShapesByDict(avatarBlendshapeData);
         }
-        public void OnBlendshapesTransition(Dictionary<string,double> data)
+        public void OnBlendshapesTransition(Dictionary<string,double> data, float duration)
         {
             Dictionary<string,double> avatarBlendshapeData = data;
-            MainManager.Instance.BlendShapesController.ChangeBlendShapesByDict(avatarBlendshapeData);
+            MainManager.Instance.BlendShapesController.TransitionToDict(avatarBlendshapeData, duration);
         }
 
         public void OnAvatarPoseTransition(Vector3 data, float duration)
@@ -40,10 +35,6 @@ namespace _Scripts._Version_1._0.Services.RoomServices.WoZRoomService
             MainManager.Instance.HeadPoseController.MakeRotTransition(data, duration);
         }
         
-        public void OnRoomCreated(string data)
-        {
-            
-        }
         
         public void OnRoomJoined(string data)
         {
