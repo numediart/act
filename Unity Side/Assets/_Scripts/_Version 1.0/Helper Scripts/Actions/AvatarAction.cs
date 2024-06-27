@@ -14,13 +14,15 @@ public class AvatarAction
     public int Intensity;
     public string CsvFilePath; //.csv
     public string AudioFilePath; //.mp4
-    
+
     // Filled by the functions
     public string Csv;
     public AudioClip Audio;
     public bool ContainsAudio;
     public double Duration;
+    public double PoseDuration;
     public FrameList ActionFrameList = new FrameList();
+    public FrameList PoseFrameList = new FrameList();
     public FrameManager FrameManager = new FrameManager();
 
     public void Init()
@@ -33,19 +35,43 @@ public class AvatarAction
                 ContainsAudio = true;
         }
 
+        bool isCsv = false;
         //Find the csv and reads it
         if (!string.IsNullOrEmpty(CsvFilePath))
-            Csv = GetCsvFromFile(CsvFilePath);
+            // check extension to know if it's a json or a csv
+            if (Path.GetExtension(CsvFilePath) == ".json")
+            {
+                Csv = GetJsonFromFile(CsvFilePath);
+                isCsv = true;
+            }
+            else if (Path.GetExtension(CsvFilePath) == ".csv")
+            {
+                Csv = GetCsvFromFile(CsvFilePath);
+                isCsv = true;
+            }
 
         // If success
-        if (!string.IsNullOrEmpty(Csv))
+        if (!string.IsNullOrEmpty(Csv) && !isCsv)
         {
-            ActionFrameList = MainManager.Instance.CsvReader.PushMyCsvIntoFrameList(Csv);
+            FrameList[] frameLists = MainManager.Instance.CsvReader.PushMyJsonIntoFrameList(Csv);
+            ActionFrameList = frameLists[0];
+            PoseFrameList = frameLists[1];
 
             Duration = ActionFrameList.Frames[^1].Timestamp;
-            
+            PoseDuration = PoseFrameList.Frames[^1].Timestamp;
+
+            FrameManager.Init(ActionFrameList.Frames, PoseFrameList.Frames);
+        }
+        else if(!string.IsNullOrEmpty(Csv) && isCsv)
+        {
+            FrameList frameList = MainManager.Instance.CsvReader.PushMyCsvIntoFrameList(Csv);
+            ActionFrameList = frameList;
+            Duration = ActionFrameList.Frames[^1].Timestamp;
             FrameManager.Init(ActionFrameList.Frames);
         }
+     
+
+
     }
 
     // TODO : Test, seems to work
@@ -69,6 +95,12 @@ public class AvatarAction
         return audioClip;
     }
 
+    private string GetJsonFromFile(string filePath)
+    {
+        using FileStream fs = File.OpenRead(CsvFilePath);
+        return fs == null ? null : new StreamReader(fs, Encoding.UTF8).ReadToEnd();
+    }
+
     private string GetCsvFromFile(string filePath)
     {
         using StreamReader sr = File.OpenText(CsvFilePath);
@@ -82,11 +114,11 @@ public class AvatarAction
 
         return sb.ToString();
     }
-    
+
     public void ForceFinish()
     {
         FrameManager.FrameNb = 0;
-        
+        FrameManager.PoseFrameNb = 0;
         if (ContainsAudio)
             MainManager.Instance.AudioController.StopAudioClip();
     }

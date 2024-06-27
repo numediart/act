@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.3069224, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2024,6 +2024,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3aaffb5d0124efc4faa98d1e8f4119a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &439787776 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4261820737895982515, guid: 5f38705d62ca70a41988af95aff64c8b, type: 3}
+  m_PrefabInstance: {fileID: 896206161}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 439787770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &447909360
 GameObject:
   m_ObjectHideFlags: 0
@@ -3088,18 +3099,19 @@ PrefabInstance:
     - target: {fileID: 4261820737895982515, guid: 5f38705d62ca70a41988af95aff64c8b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 903186443}
     - target: {fileID: 4261820737895982515, guid: 5f38705d62ca70a41988af95aff64c8b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4261820737895982515, guid: 5f38705d62ca70a41988af95aff64c8b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: StartAndRecordQueue
+      value: OnRecordButtonClicked
       objectReference: {fileID: 0}
     - target: {fileID: 4261820737895982515, guid: 5f38705d62ca70a41988af95aff64c8b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: MainManager, Assembly-CSharp
+      value: _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService.LiveStreamingRoomService,
+        Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 4261820737895982515, guid: 5f38705d62ca70a41988af95aff64c8b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -3130,8 +3142,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 903186440}
-  - component: {fileID: 903186441}
-  - component: {fileID: 903186442}
   - component: {fileID: 903186443}
   m_Layer: 0
   m_Name: _Script
@@ -3155,36 +3165,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &903186441
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 903186439}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51469b33467409449995d9b4cef0da3b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &903186442
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 903186439}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 313dbad20682d5049bbe8804052160ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  liveStreamingDataPrefab: {fileID: 2108848773}
-  headJoint: {fileID: 1476566580}
-  leftEyeJoint: {fileID: 1039234670}
-  rightEyeJoint: {fileID: 1813595973}
-  headNeckJoint: {fileID: 936797160}
-  audioSource: {fileID: 1477735880}
 --- !u!114 &903186443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3202,6 +3182,7 @@ MonoBehaviour:
   headNeckJoint: {fileID: 936797160}
   leftEyeJoint: {fileID: 1039234670}
   rightEyeJoint: {fileID: 1813595973}
+  recordingButton: {fileID: 439787776}
 --- !u!1 &922688379 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 11c6be2b968dce74cb363979afcf80ae, type: 3}

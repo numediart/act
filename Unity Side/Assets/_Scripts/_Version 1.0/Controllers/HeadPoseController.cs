@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
+using Pose = _Scripts._Version_1._0.Utils.Pose;
 
 public class HeadPoseController : MonoBehaviour
 {
@@ -22,6 +23,8 @@ public class HeadPoseController : MonoBehaviour
 
     private Quaternion _neutralHeadValue;
     private Quaternion _neutralNeckValue;
+    
+    private Frame _previousFrame;
 
     #endregion
 
@@ -36,6 +39,30 @@ public class HeadPoseController : MonoBehaviour
         _neutralNeckValue = NeckJoint.localRotation;
     }
 
+    public void HeadPoseUpdateByFrameAndPrevious(Frame frame, Frame previousFrame)
+    {
+
+        
+        double poseRx = frame.PoseDict["pose_Rx"];
+        double poseRy = frame.PoseDict["pose_Ry"];
+        double poseRz = frame.PoseDict["pose_Rz"];
+        
+        if(_previousFrame!=null){
+        if (Mathf.Abs((float)(poseRx - _previousFrame.PoseDict["pose_Rx"])) < 0.01f &&
+            Mathf.Abs((float)(poseRy - _previousFrame.PoseDict["pose_Ry"])) < 0.01f &&
+            Mathf.Abs((float)(poseRz - _previousFrame.PoseDict["pose_Rz"])) < 0.01f)
+        {
+            return;
+        }
+        }
+        Vector3 rot = ExtractRotationFromDict(frame.PoseDict);
+        
+        // Make HeadPos Change Instantly
+        HeadJoint.localRotation = CalculateQuaternionForPose(rot, _headMultiplier, HeadRotCorrection);
+        NeckJoint.localRotation = CalculateQuaternionForPose(rot, _neckMultiplier, NeckRotCorrection);
+        _previousFrame = frame;
+    }
+    
     // Function used in MainManager to Update the Head & Neck rotation according to a Frame
     // The same function is called when the admin is moving the avatar for the user
     public void HeadPoseUpdateByFrame(Frame frame)
@@ -148,17 +175,17 @@ public class HeadPoseController : MonoBehaviour
     // Used by Admin, will be sent to User
     private void MakeServerRequestForHeadPose(Dictionary<string, double> newPose)
     {
-      /*  if (MainManager.Instance.NetworkMode != NetworkMode.OFFLINE)
-        {
+     
             // Server request
             NetworkManager.Instance.AvatarHeadMoved(newPose["pose_Rx"], newPose["pose_Ry"], newPose["pose_Rz"]);
-        }*/
+        
     }
 
     private void SendHeadPoseTransitionToUser(Vector3 futureRot, float transitionDuration)
     {
-        /*if (MainManager.Instance.NetworkMode != NetworkMode.OFFLINE)
-            NetworkManager.Instance.AvatarPoseTransitionToNewFrame(JsonConvert.SerializeObject(futureRot), transitionDuration);*/
+        
+            NetworkManager.Instance.AvatarPoseTransitionToNewFrame(JsonConvert.SerializeObject(new {x=futureRot.x, y=futureRot.y, z=futureRot.z}), transitionDuration);
+        
     }
     
     #endregion

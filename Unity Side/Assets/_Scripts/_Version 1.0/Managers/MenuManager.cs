@@ -40,7 +40,6 @@ public class MenuManager : MonoBehaviour
     public void LoadLiveScene()
     {
         SceneManager.LoadScene("_Ver1.0 - LiveStream With LipSync");
-        NetworkManager.Instance.CreateLiveStreamingRoom("LiveStreamRoom", "password");
     }
     public void LoadLiveRoomSelectionScene()
     {

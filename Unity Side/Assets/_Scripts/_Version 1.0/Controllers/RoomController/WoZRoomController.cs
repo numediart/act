@@ -9,6 +9,7 @@ namespace _Scripts._Version_1._0.Controllers.RoomController
     public class WoZRoomController:AbstractRoomController<WoZRoomController>
     {
         
+        
         WoZRoomService _woZRoomService;
         public WoZRoomController(WoZRoomService woZRoomService)
         {
@@ -32,10 +33,10 @@ namespace _Scripts._Version_1._0.Controllers.RoomController
             Managers.Network.WebSocket.EventManager.Instance.Off(EnumEvents.AvatarBlendshapeTransition.Name, OnBlendshapesTransition);
             Managers.Network.WebSocket.EventManager.Instance.Off(EnumEvents.AvatarPoseTransition.Name, OnAvatarPoseTransition);
         }
-        
+
         protected override void OnRoomCreated(string data)
         {
-            _woZRoomService.OnRoomCreated(data);
+            throw new System.NotImplementedException();
         }
 
         protected override void OnRoomJoined(string data)
@@ -47,7 +48,8 @@ namespace _Scripts._Version_1._0.Controllers.RoomController
         {
             throw new System.NotImplementedException();
         }
-        
+
+
         private void OnAvatarHeadMove(string data)
         {
             AvatarHeadMoveData avatarHeadMoveData = JsonConvert.DeserializeObject<AvatarHeadMoveData>(data);
@@ -58,10 +60,16 @@ namespace _Scripts._Version_1._0.Controllers.RoomController
             Dictionary<string,double> avatarBlendshapeData = JsonConvert.DeserializeObject<Dictionary<string,double>>(data);
             _woZRoomService.OnAvatarBlendshapeMove(avatarBlendshapeData);
         }
+        public struct BlendshapeTransitionData
+        {
+            public Dictionary<string,double> BlendshapeDict;
+            public float duration;
+        }
+        
         private void OnBlendshapesTransition(string data)
         {
-            Dictionary<string,double> avatarBlendshapeData = JsonConvert.DeserializeObject<Dictionary<string,double>>(data);
-            _woZRoomService.OnBlendshapesTransition(avatarBlendshapeData);
+            BlendshapeTransitionData avatarBlendshapeData = JsonConvert.DeserializeObject<BlendshapeTransitionData>(data);
+            _woZRoomService.OnBlendshapesTransition(avatarBlendshapeData.BlendshapeDict, avatarBlendshapeData.duration);
         }
         
         struct AvatarPoseData

@@ -20,7 +20,7 @@ public class LiveStreamingRoomService(ILogger<LiveStreamingRoom> logger, MainWeb
     protected sealed override Dictionary<string, LiveStreamingRoom> Rooms { get; set; } =
         new Dictionary<string, LiveStreamingRoom>();
 
-    public override void OnRequestRoomCreate(RoomCreationData roomCreationData)
+    public override void OnRequestRoomCreate(RoomCreationData roomCreationData) 
     {
         logger.LogInformation("Creating room");
         LiveStreamingRoom room = new LiveStreamingRoom(Logger);
@@ -28,10 +28,13 @@ public class LiveStreamingRoomService(ILogger<LiveStreamingRoom> logger, MainWeb
         _mainWebSocketService.RegisterWebsocketService<ConnectionBehavior>("/openface/AudioData/" + room.RoomId);
         logger.LogInformation("Room created with id: " + room.RoomId);
         room.InitRoom(roomCreationData.RoomOwner ?? "", roomCreationData.RoomName, roomCreationData.Password);
+        
         try
         {   
             Rooms.Add(room.RoomId.ToString(), room);
             room.AddClient(mainWebSocketService.GetClient(roomCreationData.RoomOwner!));
+            RoomInfo roomInfo = new RoomInfo(room.RoomName, room.RoomOwner, room.RoomId.ToString(), room.HasPassword(), room.Clients.Count);
+            mainWebSocketService.GetClient(roomCreationData.RoomOwner!).Emit(EnumEvents.LiveStreamingRoomCreated.Name, roomInfo.ToJson() );
         }
         catch (System.Exception e)
         {
@@ -43,9 +46,10 @@ public class LiveStreamingRoomService(ILogger<LiveStreamingRoom> logger, MainWeb
     {
         if (Rooms.TryGetValue(roomId, out LiveStreamingRoom room))
         {
-            if (room.VerifyPassword(password))
+            if (room.VerifyPassword(password??""))
             {
                 room.AddClient(mainWebSocketService.GetClient(clientId));
+                mainWebSocketService.GetClient(clientId).Emit("RoomJoined", room.RoomId.ToString());
             }
             else
             {
@@ -63,6 +67,7 @@ public class LiveStreamingRoomService(ILogger<LiveStreamingRoom> logger, MainWeb
         if (Rooms.TryGetValue(roomId, out LiveStreamingRoom room))
         {
             room.RemoveClient(mainWebSocketService.GetClient(clientId));
+            mainWebSocketService.GetClient(clientId).Emit("RoomLeft", room.RoomId.ToString());
         }
         else
         {
@@ -113,6 +118,32 @@ public class LiveStreamingRoomService(ILogger<LiveStreamingRoom> logger, MainWeb
         }
     }
 
+    public void OnRequestLiveStreamRoomInfos(string clientId)
+    {
+      
+        List<RoomInfo> roomInfos = new List<RoomInfo>();
+        foreach (var room in Rooms)
+        {
+            roomInfos.Add(new RoomInfo(room.Value.RoomName, room.Value.RoomOwner,room.Value.RoomId.ToString(), room.Value.HasPassword(), room.Value.Clients.Count));
+        }
+        mainWebSocketService.GetClient(clientId).Emit("LiveStreamingRoomInfos", roomInfos);
+    }
+
+    public struct poseData
+    {
+        public double pose_Tx { get; set; }
+        public double pose_Ty { get; set; }
+        public double pose_Tz { get; set; }
+        public double pose_Rx { get; set; }
+        public double pose_Ry { get; set; }
+        public double pose_Rz { get; set; }
+        public double frame;
+        public double timestamp;
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(new { pose_Tx, pose_Ty, pose_Tz, pose_Rx, pose_Ry, pose_Rz, frame });
+        }
+    }
     /// <summary>
     /// Receive data from openface and
     /// </summary>
@@ -128,9 +159,21 @@ public class LiveStreamingRoomService(ILogger<LiveStreamingRoom> logger, MainWeb
                 Logger.LogError("Data is null");
                 return;
             }
-
             AU2BlendShapes au2BlendShapes = new AU2BlendShapes(incomingData);
+            Pose pose = incomingData.pose;
+            poseData poseData = new poseData();
+            poseData.pose_Tx = pose.pose_Tx;
+            poseData.pose_Ty = pose.pose_Ty;
+            poseData.pose_Tz = pose.pose_Tz;
+            poseData.pose_Rx = pose.pose_Rx;
+            poseData.pose_Ry = pose.pose_Ry;
+            poseData.pose_Rz = pose.pose_Rz;
+            poseData.frame = incomingData.frame;
+            poseData.timestamp = incomingData.timestamp;
+            
+            
             room.BroadcastToRoom(new WebsocketMessage(EnumEvents.LiveStreamingData.Name, au2BlendShapes.ToString()).ToJson());
+            room.BroadcastToRoom(new WebsocketMessage(EnumEvents.LiveStreamingAvatarHeadPose.Name, poseData.ToString() ).ToJson());
         }
         else
         {

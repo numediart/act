@@ -3,6 +3,7 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace _Scripts._Version_1._0.Managers.Network.WebSocket
 {
@@ -78,10 +79,7 @@ namespace _Scripts._Version_1._0.Managers.Network.WebSocket
                     {
                         var rawMessage = stringBuilder.ToString();
                         var message = Newtonsoft.Json.JsonConvert.DeserializeObject<MsgFormat>(rawMessage);
-
-                        // Emit the event on the UI thread
-                    
-                            _eventManager.Emit(message.EventName, message.Data);
+                        _eventManager.Emit(message.EventName, message.Data);
 
                         // Reset the StringBuilder for the next message
                         stringBuilder.Clear();

@@ -1,1 +1,35 @@
-[]
+[
+  {
+    "Name": "TEST",
+    "AvatarActions": [
+      {
+        "Intensity": 0,
+        "CsvFilePath": "C:\\Users\\pierr\\Downloads\\smile.json",
+        "AudioFilePath": "",
+        "Csv": null,
+        "Audio": null,
+        "ContainsAudio": false,
+        "Duration": 0.0,
+        "PoseDuration": 0.0,
+        "ActionFrameList": {
+          "Frames": null
+        },
+        "PoseFrameList": {
+          "Frames": null
+        },
+        "FrameManager": {
+          "FrameNb": 0,
+          "Fps": 0,
+          "MaxFrameNb": 0,
+          "FrameNbToStopIfTransition": 0,
+          "FrameNbToStartIfTransition": 0,
+          "PoseFrameNb": 0,
+          "PoseFps": 0,
+          "PoseMaxFrameNb": 0,
+          "PoseFrameNbToStopIfTransition": 0,
+          "PoseFrameNbToStartIfTransition": 0
+        }
+      }
+    ]
+  }
+]

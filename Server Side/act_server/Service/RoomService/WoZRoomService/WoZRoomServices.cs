@@ -1,34 +1,50 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json.Nodes;
 using act_server.Controller;
+using act_server.DataDescriptorClass;
+using act_server.Enum;
 using act_server.Room;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace act_server.Service.RoomService.WoZRoomService;
 
-public record struct AvatarHeadMoveData
+public struct AvatarHeadMoveData
 {
-    public string X;
-    public string Y;
-    public string Z;
+    public double x;
+    public double y;
+    public double z;
 }
 
-public record struct AvatarBlendshapeMoveData
+public  struct AvatarBlendshapeMoveData
 {
-    public string BlendshapeName;
+    public string BlendshapeDict;
     public string Value;
 }
 
-public record struct AvatarBlendshapeTransitionData
+public struct AvatarBlendshapeTransitionData
 {
-    public string BlendshapeName;
+    public Dictionary<string, double> BlendshapeDict;
     public string Value;
-    public string Duration;
+    public float Duration;
+
+    public AvatarBlendshapeTransitionData(Dictionary<string,double> blendshapeDict, string value, float duration)
+    {
+        BlendshapeDict = blendshapeDict;
+        Value = value;
+        Duration = duration;
+    }
+
 }
 
 public struct AvatarPoseTransitionData
 {
-    public string PoseName;
+    public float x;
+    public float y;
+    public float z;
     public string Duration;
 }
 
@@ -38,16 +54,25 @@ public struct AvatarPoseTransitionData
 public class WoZRoomService(ILogger<WoZRoom> logger, MainWebSocketService.MainWebSocketService mainWebSocketService)
     : AbstractRoomService<WoZRoom>(logger)
 {
-    protected override ILogger<WoZRoom> Logger {get; set;} = logger;
+    protected override ILogger<WoZRoom> Logger { get; set; } = logger;
     protected sealed override Dictionary<string, WoZRoom> Rooms { get; set; } = new Dictionary<string, WoZRoom>();
-    
+
     public override void OnRequestRoomCreate(RoomCreationData roomCreationData)
     {
-        WoZRoom room = new WoZRoom(Logger);
-        room.InitRoom(roomCreationData.RoomOwner, roomCreationData.RoomName, roomCreationData.Password);
         try
         {
+            WoZRoom room = new WoZRoom(Logger);
+            Logger.LogInformation("Creating room with id: " + room.RoomId + " and owner: " +
+                                  roomCreationData.RoomOwner +
+                                  " and name: " + roomCreationData.RoomName + " and password: " +
+                                  roomCreationData.Password);
+            room.InitRoom(roomCreationData.RoomOwner!, roomCreationData.RoomName, roomCreationData.Password);
+            RoomInfo roomInfo = new RoomInfo(room.RoomName, room.RoomOwner, room.RoomId.ToString(), room.HasPassword(),
+                room.Clients.Count);
+            room.AddClient(mainWebSocketService.GetClient(room.RoomOwner));
             Rooms.Add(room.RoomId.ToString(), room);
+            mainWebSocketService.GetClient(room.RoomOwner).Emit(JsonConvert.SerializeObject(new
+                { EventName = EnumEvents.WoZRoomCreated.Name, Data = roomInfo.ToJson() }));
         }
         catch (Exception e)
         {
@@ -66,6 +91,8 @@ public class WoZRoomService(ILogger<WoZRoom> logger, MainWebSocketService.MainWe
             }
 
             room.AddClient(mainWebSocketService.GetClient(clientId));
+
+            mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomJoined.Name, room.RoomId.ToString());
         }
     }
 
@@ -81,6 +108,7 @@ public class WoZRoomService(ILogger<WoZRoom> logger, MainWebSocketService.MainWe
             }
 
             room.RemoveClient(mainWebSocketService.GetClient(clientId));
+            mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomLeft.Name, room.RoomId.ToString());
         }
     }
 
@@ -99,6 +127,7 @@ public class WoZRoomService(ILogger<WoZRoom> logger, MainWebSocketService.MainWe
             if (room.CheckAdmin(clientId))
             {
                 room.ChangePassword(newPassword);
+                // mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomPasswordChanged.Name, room.RoomId.ToString());
                 return;
             }
 
@@ -114,6 +143,24 @@ public class WoZRoomService(ILogger<WoZRoom> logger, MainWebSocketService.MainWe
         }
     }
 
+    public void OnRequestWoZRoomInfos(string clientId)
+    {
+        List<object> roomInfos = new List<object>();
+        if (Rooms.Values.Count == 0)
+        {
+            mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomsInfos.Name, roomInfos);
+            return;
+        }
+
+        foreach (WoZRoom room in Rooms.Values)
+        {
+            roomInfos.Add(new RoomInfo(room.RoomName, room.RoomOwner, room.RoomId.ToString(), room.HasPassword(),
+                room.Clients.Count).ToJson());
+        }
+
+        mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomsInfos.Name, roomInfos);
+    }
+
     public void OnRequestAvatarHeadMove(string roomId, string clientId, AvatarHeadMoveData data)
     {
         if (Rooms.TryGetValue(roomId, out WoZRoom room))
@@ -122,7 +169,9 @@ public class WoZRoomService(ILogger<WoZRoom> logger, MainWebSocketService.MainWe
             {
                 foreach (Client.Client client in room.Clients)
                 {
-                    room.Emit("AvatarHeadMove", data.ToString(), client.ClientId.ToString());
+                    if (client.ClientId.ToString() != clientId)
+                        room.Emit(EnumEvents.AvatarHeadMove.Name, JsonConvert.SerializeObject(new {x=data.x, y=data.y,z=data.z}),
+                            client.ClientId.ToString());
                 }
 
                 return;
@@ -141,8 +190,9 @@ public class WoZRoomService(ILogger<WoZRoom> logger, MainWebSocketService.MainWe
             {
                 foreach (Client.Client client in room.Clients)
                 {
-                    room.Emit("AvatarBlendshapeMove",
-                        $"{{\"blendshapeName\":\"{avatarBlendshapeMoveData.BlendshapeName}\",\"value\":\"{avatarBlendshapeMoveData.Value}\"}}",
+                    if(client.ClientId.ToString() != clientId)
+                    room.Emit(EnumEvents.AvatarBlendshapeMove.Name,
+                        JsonConvert.SerializeObject(new { BlendshapeDict = avatarBlendshapeMoveData.BlendshapeDict, Value = avatarBlendshapeMoveData.Value}),
                         client.ClientId.ToString());
                 }
 
@@ -162,8 +212,13 @@ public class WoZRoomService(ILogger<WoZRoom> logger, MainWebSocketService.MainWe
             {
                 foreach (Client.Client client in room.Clients)
                 {
-                    room.Emit("AvatarBlendshapeTransition",
-                        $"{{\"blendshapeName\":\"{blendshapeTransitionData.BlendshapeName}\",\"value\":\"{blendshapeTransitionData.Value}\",\"duration\":\"{blendshapeTransitionData.Duration}\"}}",
+                    if (client.ClientId.ToString() != clientId)
+                    room.Emit(EnumEvents.AvatarBlendshapeTransition.Name,
+                        JsonConvert.SerializeObject(new
+                        {
+                            blendshapeDict = blendshapeTransitionData.BlendshapeDict,
+                            duration = blendshapeTransitionData.Duration
+                        }),
                         client.ClientId.ToString());
                 }
 
@@ -183,8 +238,13 @@ public class WoZRoomService(ILogger<WoZRoom> logger, MainWebSocketService.MainWe
             {
                 foreach (Client.Client client in room.Clients)
                 {
-                    room.Emit("AvatarPoseTransition",
-                        $"{{\"poseName\":\"{poseTransitionData.PoseName}\",\"duration\":\"{poseTransitionData.Duration}\"}}",
+                    if (client.ClientId.ToString() != clientId)
+                    room.Emit(EnumEvents.AvatarPoseTransition.Name,
+                        JsonConvert.SerializeObject(new
+                        {
+                            x = poseTransitionData.x, y = poseTransitionData.y, z = poseTransitionData.z,
+                            duration = poseTransitionData.Duration
+                        }),
                         client.ClientId.ToString());
                 }
 

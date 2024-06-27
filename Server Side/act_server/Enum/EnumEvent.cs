@@ -45,20 +45,30 @@ public class EnumEvents : Enumeration<EnumEvents>
     #endregion
 
     #region Live Stream Events
-
-    // create LiveStreamingRoom events
+    
     public static readonly EnumEvents RequestLiveStreamingRoom = new(GetNextValue(), "RequestLiveStreamingRoom");
+    public static readonly EnumEvents RequestLiveStreamingRooms = new(GetNextValue(), "RequestLiveStreamingRooms");
+    public static readonly EnumEvents RequestLiveStreamingRoomJoin = new(GetNextValue(), "RequestLiveStreamingRoomJoin");
+    public static readonly EnumEvents LiveStreamingRoomsInfos = new(GetNextValue(), "LiveStreamingRoomsInfos");
     public static readonly EnumEvents LiveStreamingRoomCreated = new(GetNextValue(), "LiveStreamingRoomCreated");
+    public static readonly EnumEvents LivestreamingRoomJoined = new(GetNextValue(), "LivestreamingRoomJoined");
     public static readonly EnumEvents LiveStreamingData = new(GetNextValue(), "LiveStreamingData");
-    public static readonly EnumEvents LiveStreamingAvatarHeadPose = new(GetNextValue(), "LiveStreamingAvatarHeadPose");
-    public static readonly EnumEvents LiveStreamingAvatarEyeGaze = new(GetNextValue(), "LiveStreamingAvatarEyeGaze");
+
+    public static readonly EnumEvents LiveStreamingAvatarHeadPose =
+        new(GetNextValue(), "LiveStreamingAvatarHeadPose");
+
+    public static readonly EnumEvents
+        LiveStreamingAvatarEyeGaze = new(GetNextValue(), "LiveStreamingAvatarEyeGaze");
+
     public static readonly EnumEvents LiveStreamingAudioData = new(GetNextValue(), "LiveStreamingAudioData");
+
 
     #endregion
 
     #region WoZRoom Events
 
     // create WoZRoom events
+    public static readonly EnumEvents RequestWoZRooms = new(GetNextValue(), "RequestWoZRooms");
     public static readonly EnumEvents RequestWoZRoomCreation = new(GetNextValue(), "RequestWoZRoomCreation");
     public static readonly EnumEvents RequestWoZRoomDeletion = new(GetNextValue(), "RequestWoZRoomDeletion");
     public static readonly EnumEvents RequestWoZRoomJoin = new(GetNextValue(), "RequestWoZRoomJoin");
@@ -66,13 +76,21 @@ public class EnumEvents : Enumeration<EnumEvents>
     public static readonly EnumEvents RequestWoZRoomBroadcast = new(GetNextValue(), "RequestWoZRoomBroadcast");
     public static readonly EnumEvents RequestPasswordChange = new(GetNextValue(), "RequestPasswordChange");
     public static readonly EnumEvents RequestRoomInfo = new(GetNextValue(), "RequestRoomInfo");
+    
     public static readonly EnumEvents RequestAvatarHeadMove = new(GetNextValue(), "RequestAvatarHeadMove");
+    public static readonly EnumEvents AvatarHeadMove = new(GetNextValue(), "AvatarHeadMove");
+    
+    
     public static readonly EnumEvents RequestAvatarBlendshapeMove = new(GetNextValue(), "RequestAvatarBlendshapeMove");
+    public static readonly EnumEvents AvatarBlendshapeMove = new(GetNextValue(), "AvatarBlendshapeMove");
+    
 
     public static readonly EnumEvents RequestAvatarBlendshapeTransition =
         new(GetNextValue(), "RequestAvatarBlendshapeTransition");
+    public static readonly EnumEvents AvatarBlendshapeTransition = new(GetNextValue(), "AvatarBlendshapeTransition");
 
     public static readonly EnumEvents RequestAvatarPoseTransition = new(GetNextValue(), "RequestAvatarPoseTransition");
+    public static readonly EnumEvents AvatarPoseTransition = new(GetNextValue(), "AvatarPoseTransition");
 
 
     public static readonly EnumEvents WoZRoomInfo = new(GetNextValue(), "WoZRoomInfo");
@@ -80,6 +98,8 @@ public class EnumEvents : Enumeration<EnumEvents>
     public static readonly EnumEvents WoZRoomDeleted = new(GetNextValue(), "WoZRoomDeleted");
     public static readonly EnumEvents WoZRoomJoined = new(GetNextValue(), "WoZRoomJoined");
     public static readonly EnumEvents WoZRoomLeft = new(GetNextValue(), "WoZRoomLeft");
+    public static readonly EnumEvents WoZRoomsInfos = new(GetNextValue(), "WoZRoomsInfos");
+    
 
     #endregion
 
