@@ -65,9 +65,11 @@ See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Kevin El Haddad - ACT Creator
+- Kevin El Haddad - ACT Creator
+- [Armand DEFFRENNES](https://github.com/JambonPasFrais) - armand.deffrennes@student.junia.com - ACT Dev
+- [Pierre-Luc MILLET](https://github.com/Pierre-LucM)- pierre-luc.millet@student.junia.com - ACT Dev
+- [Arthur PINEAU](https://github.com/Arthur-P0) - arthur.pineau@student.junia.com - ACT Dev
 
-Armand DEFFRENNES - armand.deffrennes@student.junia.com - ACT Dev
 
 Project Link: [Git Repo](https://github.com/numediart/ACT)
 
