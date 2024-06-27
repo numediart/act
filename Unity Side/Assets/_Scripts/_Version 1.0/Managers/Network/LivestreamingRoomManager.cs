@@ -37,7 +37,7 @@ public class LivestreamingRoomManager : AbstractRoomSelection<List<Livestreaming
 
     private void Awake()
     {
-        StartCoroutine(RequestRoomInfos());
+        //StartCoroutine(RequestRoomInfos());
         EventManager.Instance.On(EnumEvents.LiveStreamingRoomsInfos.Name, data =>
         {
             List<RoomData> roomsData = JsonConvert.DeserializeObject<List<RoomData>>(data);
