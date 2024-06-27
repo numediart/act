@@ -18,7 +18,7 @@ In the futur, we want to improve the toolkit's Record and WoZ, with a better sta
 ## How To Use :
 First, you have to start the ACT Server :
 
-![]("./README_Img/GIF_Start_Serveur.gif")
+![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/GIF_Start_Serveur.gif)
 
 After that, you lauch the unity build :
 
