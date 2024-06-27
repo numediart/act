@@ -22,7 +22,7 @@ First, you have to start the ACT Server :
 
 After that, you lauch the unity build :
 
-PICTURE OF ACT UNITY START 
+
 
 Here you have 4 choice :
 
