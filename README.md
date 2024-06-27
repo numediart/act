@@ -69,6 +69,8 @@ See `LICENSE` for more information.
 - [Armand DEFFRENNES](https://github.com/JambonPasFrais) - armand.deffrennes@student.junia.com - ACT Dev
 - [Pierre-Luc MILLET](https://github.com/Pierre-LucM)- pierre-luc.millet@student.junia.com - ACT Dev
 - [Arthur PINEAU](https://github.com/Arthur-P0) - arthur.pineau@student.junia.com - ACT Dev
+
+
 Project Link: [Git Repo](https://github.com/numediart/ACT)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
