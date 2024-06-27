@@ -22,28 +22,39 @@ First, you have to start the ACT Server :
 
 After that, you lauch the unity build :
 
-
+![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/Gif_Unity_Start.gif)
 
 Here you have 4 choice :
 
 - Configuration :
   You can configurate your avatar here :
-  PICTURE OF CONFIGURATION
+
+![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/GIF_Avatar_Configuration.gif)
+
   In the first part, you can change neck and head correction, transition duration and if you want the total expression or not.
   In the second part, you can add, edit and delete your own action. You have to import a CSV with all your action unit.
 
 
-- Record : Here, you can record your own action previously update on Configuration : PICTURE OF RECORD.
+- Record : Here, you can record your own action previously update on Configuration.
+
+![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/GIF_Avatar_Record.gif)
+
   You have a control pannel, where all action are register. You can drag and drop an action in the queue to create your own record.
   You can adjust head and neck rotation to have the best possible record.
 
 
-- Wizard Of Oz : Here, you can create a room and connect to it to use expression record before.PICTURE OF WoZ.
+- Wizard Of Oz : Here, you can create a room and connect to it to use expression record before.
+
+![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/GIF_Avatar_WoZ.gif)
+
   All the expression record are on your left, you can press on it to see the expression in action.
 
 
 - LiveStreaming : !!Warning!! Before launch live Streaming, you have to start Openface so that server can have the data send by openface to LiveStream your expression.
-PICTURE OF LIVESTREAMING. You can record your expression in realtime, and you can change the parameter of lips sync like phoneme, your mic or enable diseable your mic.
+
+![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/Lips-Sync%20Demo.gif)
+
+You can record your expression in realtime, and you can change the parameter of lips sync like phoneme, your mic or enable diseable your mic.
 
 ## How does it work 
 
