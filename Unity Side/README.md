@@ -60,3 +60,7 @@ You can record your expression in realtime, and you can change the parameter of 
 
 We use openface, who sends these action unit to our server. In the server, the action unit are transform to BlendShape expression. One action unit is linked to several BlendShape.
 We take the value of the action unit and we adjust it to work on Unity BlenShape. After this conversion, we send a Json File with all BlendShape name and value and we apply it to the avatar.
+
+## Openface 
+
+You will need openface with a websocket support to use ACT. You will find it at [Openface Websocket](https://github.com/numediart/openface_act)
