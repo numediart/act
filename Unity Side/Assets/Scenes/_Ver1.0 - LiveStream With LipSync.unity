@@ -685,7 +685,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _LipSyncInterface: {fileID: 465796558}
   _Parameter: {fileID: 809470518}
-  _Record: {fileID: 0}
+  _Record: {fileID: 439787770}
 --- !u!114 &101540455
 MonoBehaviour:
   m_ObjectHideFlags: 0
