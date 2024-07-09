@@ -42,7 +42,7 @@ This project has highly been inspired by an older project we made in Godoot Engi
    - Record : Here you can create a video of a sequence of expression you have made
    - Wizard Of Oz : In this part, You create a room to control the avatar with expression you made
    - Live Stream : With openface or your model, you can control avatar, use lipsync and record our expression
-   > [!WARNING] To use livestream, check the video : ![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Readme_Vid/Tutorial_LiveStream.mp4)
+   > [!WARNING] To use livestream, check the video : ![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Readme_Vid/Tutorial_LiveStream.gif)
 
 <!-- HOW ? -->
 ## How does it work ?
