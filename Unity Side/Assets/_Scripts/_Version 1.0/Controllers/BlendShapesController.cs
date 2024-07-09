@@ -127,6 +127,7 @@ public class BlendShapesController : MonoBehaviour
 
     public void TransitionToDict(Dictionary<string, double> futureChangesDict, float transitionDuration)
     {
+        Debug.Log("Transitioning to new frame");
         // Will launch 82 coroutines
         foreach (var futureChange in futureChangesDict)
         {
@@ -184,7 +185,7 @@ public class BlendShapesController : MonoBehaviour
     private void SendBlendShapesTransitionToUser(Dictionary<string, double> changesDict, float transitionDuration)
     {
         //  if (MainManager.Instance.NetworkMode != NetworkMode.OFFLINE)
-        NetworkManager.Instance.AvatarBlendShapeTransitionToNewFrame(JsonConvert.SerializeObject(changesDict),
+        NetworkManager.Instance.AvatarBlendShapeTransitionToNewFrame(changesDict,
             transitionDuration);
     }
 

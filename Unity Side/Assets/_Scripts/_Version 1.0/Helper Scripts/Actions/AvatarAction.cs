@@ -64,10 +64,12 @@ public class AvatarAction
         }
         else if(!string.IsNullOrEmpty(Csv) && isCsv)
         {
-            FrameList frameList = MainManager.Instance.CsvReader.PushMyCsvIntoFrameList(Csv);
-            ActionFrameList = frameList;
+            FrameList[] frameList = MainManager.Instance.CsvReader.PushMyCsvIntoFrameList(Csv);
+            ActionFrameList = frameList[0];
+            PoseFrameList = frameList[1];
             Duration = ActionFrameList.Frames[^1].Timestamp;
-            FrameManager.Init(ActionFrameList.Frames);
+            PoseDuration = PoseFrameList.Frames[^1].Timestamp;
+            FrameManager.Init(ActionFrameList.Frames, PoseFrameList.Frames);
         }
      
 

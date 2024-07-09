@@ -23,10 +23,10 @@ public record WoZAvatarHeadMoveData : AbstractRoomEventData<AvatarHeadMoveData>
 
 public record WoZAvatarBlendshapeMoveData : AbstractRoomEventData<AvatarBlendshapeMoveData>
 {
-    public WoZAvatarBlendshapeMoveData(string roomId, string blendshapeDict, string value)
+    public WoZAvatarBlendshapeMoveData(string roomId, Dictionary<string, double> blendshapeDict)
     {
         this.roomId = roomId;
-        this.Data = new AvatarBlendshapeMoveData { BlendshapeDict = blendshapeDict, Value = value };
+        this.Data = new AvatarBlendshapeMoveData { BlendshapeDict = blendshapeDict };
     }
 
     protected sealed override AvatarBlendshapeMoveData Data { get; set; }
@@ -40,8 +40,18 @@ public record WoZAvatarBlendshapeTransitionData {
     public string RoomId { get; set; }
 
     [JsonProperty("blendshapeTransitionData")]
-    public Dictionary<string, double> BlendshapeTransitionData { get; set; }
+    public BlendshapeTransitionData BlendshapeTransitionData { get; set; }
 
+    [JsonProperty("Duration")]
+    public float Duration { get; set; }
+}
+
+public class BlendshapeTransitionData {
+    [JsonProperty("BlendshapeDict")]
+    public Dictionary<string, double> BlendshapeDict { get; set; }
+
+    // If Duration is part of this inner object based on your JSON structure
+    // Adjust the type if necessary, e.g., if it should be a string or a different type
     [JsonProperty("Duration")]
     public float Duration { get; set; }
 }
@@ -51,11 +61,11 @@ public record WoZAvatarPoseTransitionData : AbstractRoomEventData<AvatarPoseTran
     public WoZAvatarPoseTransitionData(string roomId, double x, double y, double z, string duration)
     {
         this.roomId = roomId;
-        this.Data = new AvatarPoseTransitionData { x = (float)x, y = (float)y, z = (float)z, Duration = duration };
+        this.Data = new AvatarPoseTransitionData { x = x, y = (float)y, z = (float)z, Duration = duration };
     }
 
     protected sealed override AvatarPoseTransitionData Data { get; set; }
 
     public string RoomId => roomId;
-    public AvatarPoseTransitionData PoseTransitionData => Data;
+    public AvatarPoseTransitionData PoseTransitionData => new AvatarPoseTransitionData { x = Data.x, y = Data.y, z = Data.z, Duration = Data.Duration };
 }

@@ -81,87 +81,109 @@ public class CsvReader : MonoBehaviour
     {
         data = CsvToRead.text.Split(new string[] { ", ", "\n" }, StringSplitOptions.None);
         int tableSize = data.Length / TotNbColumn - (IgnoreFirstLine ? 1 : 0);
+        FrameList frameList = new FrameList();
+        FrameList frameListPose = new FrameList();
         MyFrameList.Frames = new Frame[tableSize];
+        
+        frameListPose.Frames = new Frame[tableSize];
+        frameList.Frames = new Frame[tableSize];
 
         CultureInfo ci = (CultureInfo)CultureInfo.InvariantCulture.Clone();
         ci.NumberFormat.CurrencyDecimalSeparator = DecimalSeparatorInCSV;
-
+        
         // Tab filling
         for (int i = 0; i < tableSize; i++)
         {
-            MyFrameList.Frames[i] = new Frame();
-
+            frameList.Frames[i] = new Frame();
+            frameListPose.Frames[i] = new Frame();
             //Frame Manager
-            MyFrameList.Frames[i].Number = int.Parse(
+            frameList.Frames[i].Number = int.Parse(
                 data[TotNbColumn * (i + (IgnoreFirstLine ? 1 : 0)) + ColumnIdForFrameNb],
                 NumberStyles.Any, ci);
-
-            MyFrameList.Frames[i].Timestamp = double.Parse(
+            frameListPose.Frames[i].Number = int.Parse(
+                data[TotNbColumn * (i + (IgnoreFirstLine ? 1 : 0)) + ColumnIdForFrameNb],
+                NumberStyles.Any, ci);
+            
+            frameList.Frames[i].Timestamp = double.Parse(
+                data[TotNbColumn * (i + (IgnoreFirstLine ? 1 : 0)) + ColumnIdForTimestamp],
+                NumberStyles.Any, ci);
+            frameListPose.Frames[i].Timestamp = double.Parse(
                 data[TotNbColumn * (i + (IgnoreFirstLine ? 1 : 0)) + ColumnIdForTimestamp],
                 NumberStyles.Any, ci);
 
             // Poses
             for (int j = 0; j < NbColumnToIgnoreForAu - NbColumnToIgnoreForPose; j++)
             {
-                MyFrameList.Frames[i].PoseDict.Add(data[NbColumnToIgnoreForPose + j],
+                frameListPose.Frames[i].PoseDict.Add(data[NbColumnToIgnoreForPose + j],
                     double.Parse(data[TotNbColumn * (i + (IgnoreFirstLine ? 1 : 0)) + NbColumnToIgnoreForPose + j],
                         NumberStyles.Any, ci));
+                
+                
             }
 
             // Action units
             for (int j = 0; j < TotNbColumn - NbColumnToIgnoreForAu; j++)
             {
-                MyFrameList.Frames[i].ActionUnitDict.Add(data[NbColumnToIgnoreForAu + j],
+                frameList.Frames[i].ActionUnitDict.Add(data[NbColumnToIgnoreForAu + j],
                     double.Parse(data[TotNbColumn * (i + (IgnoreFirstLine ? 1 : 0)) + NbColumnToIgnoreForAu + j],
                         NumberStyles.Any, ci));
             }
         }
     }
 
-    public FrameList PushMyCsvIntoFrameList(string csv)
+    public FrameList[] PushMyCsvIntoFrameList(string csv)
     {
+        data = CsvToRead.text.Split(new string[] { ", ", "\n" }, StringSplitOptions.None);
+        int tableSize = data.Length / TotNbColumn - (IgnoreFirstLine ? 1 : 0);
         FrameList frameList = new FrameList();
-
-        string[] csvDataTab = csv.Split(new string[] { ", ", "\n" }, StringSplitOptions.None);
-        int tableSize = csvDataTab.Length / TotNbColumn - (IgnoreFirstLine ? 1 : 0);
+        FrameList frameListPose = new FrameList();
+        MyFrameList.Frames = new Frame[tableSize];
+        
+        frameListPose.Frames = new Frame[tableSize];
         frameList.Frames = new Frame[tableSize];
 
         CultureInfo ci = (CultureInfo)CultureInfo.InvariantCulture.Clone();
         ci.NumberFormat.CurrencyDecimalSeparator = DecimalSeparatorInCSV;
-
+        
         // Tab filling
         for (int i = 0; i < tableSize; i++)
         {
             frameList.Frames[i] = new Frame();
-
+            frameListPose.Frames[i] = new Frame();
             //Frame Manager
             frameList.Frames[i].Number = int.Parse(
-                csvDataTab[TotNbColumn * (i + (IgnoreFirstLine ? 1 : 0)) + ColumnIdForFrameNb],
+                data[TotNbColumn * (i + (IgnoreFirstLine ? 1 : 0)) + ColumnIdForFrameNb],
                 NumberStyles.Any, ci);
-
+            frameListPose.Frames[i].Number = int.Parse(
+                data[TotNbColumn * (i + (IgnoreFirstLine ? 1 : 0)) + ColumnIdForFrameNb],
+                NumberStyles.Any, ci);
+            
             frameList.Frames[i].Timestamp = double.Parse(
-                csvDataTab[TotNbColumn * (i + (IgnoreFirstLine ? 1 : 0)) + ColumnIdForTimestamp],
+                data[TotNbColumn * (i + (IgnoreFirstLine ? 1 : 0)) + ColumnIdForTimestamp],
+                NumberStyles.Any, ci);
+            frameListPose.Frames[i].Timestamp = double.Parse(
+                data[TotNbColumn * (i + (IgnoreFirstLine ? 1 : 0)) + ColumnIdForTimestamp],
                 NumberStyles.Any, ci);
 
             // Poses
             for (int j = 0; j < NbColumnToIgnoreForAu - NbColumnToIgnoreForPose; j++)
             {
-                frameList.Frames[i].PoseDict.Add(csvDataTab[NbColumnToIgnoreForPose + j],
-                    double.Parse(
-                        csvDataTab[TotNbColumn * (i + (IgnoreFirstLine ? 1 : 0)) + NbColumnToIgnoreForPose + j],
+                frameListPose.Frames[i].PoseDict.Add(data[NbColumnToIgnoreForPose + j],
+                    double.Parse(data[TotNbColumn * (i + (IgnoreFirstLine ? 1 : 0)) + NbColumnToIgnoreForPose + j],
                         NumberStyles.Any, ci));
+                
+                
             }
 
             // Action units
             for (int j = 0; j < TotNbColumn - NbColumnToIgnoreForAu; j++)
             {
-                frameList.Frames[i].ActionUnitDict.Add(csvDataTab[NbColumnToIgnoreForAu + j],
-                    double.Parse(csvDataTab[TotNbColumn * (i + (IgnoreFirstLine ? 1 : 0)) + NbColumnToIgnoreForAu + j],
+                frameList.Frames[i].ActionUnitDict.Add(data[NbColumnToIgnoreForAu + j],
+                    double.Parse(data[TotNbColumn * (i + (IgnoreFirstLine ? 1 : 0)) + NbColumnToIgnoreForAu + j],
                         NumberStyles.Any, ci));
             }
         }
-
-        return frameList;
+        return new []{ frameList, frameListPose } ;
     }
 
     public void ClearCsv()
