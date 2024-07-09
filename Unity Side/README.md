@@ -55,7 +55,9 @@ Here you have 4 choice :
   All the expression record are on your left, you can press on it to see the expression in action.
 
 
-- LiveStreaming : !!Warning!! Before launch live Streaming, you have to start Openface so that server can have the data send by openface to LiveStream your expression.
+- LiveStreaming : 
+> [!WARNING] 
+> Before launch live Streaming, you have to start Openface so that server can have the data send by openface to LiveStream your expression.
 
 ![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/Lips-Sync%20Demo.gif)
 
