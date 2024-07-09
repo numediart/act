@@ -218,63 +218,54 @@ public class NetworkManager : MonoBehaviour
         }
     }
 
-    public async void AvatarHeadMoved(double poseRx, double poseRy, double poseRz)
+    public void AvatarHeadMoved(double poseRx, double poseRy, double poseRz)
     {
         // Send request to server
         if (Instance.TryGetComponent<WoZRoom>(out var woZRoom) == false)
             return;
-        woZRoom = Instance.GetComponent<WoZRoom>();
         AvatarHeadMoveData data = new AvatarHeadMoveData(woZRoom.RoomId, poseRx, poseRy, poseRz);
-        Debug.Log(JsonConvert.SerializeObject(data.ToJson()));
-        Debug.Log(JsonConvert.SerializeObject(new
-        {
-            EventName = EnumEvents.RequestAvatarHeadMove.Name, Data = data.ToJson()
-        }));
         WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
         {
             EventName = EnumEvents.RequestAvatarHeadMove.Name, Data = data.ToJson()
         }));
     }
 
-    public async void AvatarPoseTransitionToNewFrame(string newRot, float durationInSeconds)
+    public  void AvatarPoseTransitionToNewFrame(Vector3 newRot, float durationInSeconds)
     {
         if (Instance.TryGetComponent<WoZRoom>(out var woZRoom) == false)
             return;
-        woZRoom = Instance.GetComponent<WoZRoom>();
+       
         WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
         {
             EventName = EnumEvents.RequestAvatarPoseTransition.Name,
             Data = new
             {
-                roomId = woZRoom.RoomId, AvatarPoseTransitionData = newRot, durationInSeconds = durationInSeconds
+                roomId = woZRoom.RoomId, x= newRot.x, y= newRot.y, z=newRot.z, Duration = durationInSeconds
             }
         }));
     }
 
-    public async void AvatarBlendShapesMoved(string dictOfBlendShapes)
+    public  void AvatarBlendShapesMoved(string dictOfBlendShapes)
     {
         if (Instance.TryGetComponent<WoZRoom>(out var woZRoom) == false)
             return;
-        woZRoom = Instance.GetComponent<WoZRoom>();
         WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
         {
             EventName = EnumEvents.RequestAvatarBlendshapeMove.Name,
-            Data = new { roomId = woZRoom.RoomId, BlendshapeDict = dictOfBlendShapes, Value = "" }
+            Data = new { roomId = woZRoom.RoomId, BlendshapeDict = dictOfBlendShapes }
         }));
     }
 
     public struct AvatarBlendshapeTransitionData
     {
-        public string BlendshapeDict;
-        public string Value;
+        public Dictionary<string, double> BlendshapeDict;
         public string Duration;
     }
 
-    public async void AvatarBlendShapeTransitionToNewFrame(string changesDict, float durationInSeconds)
+    public  void AvatarBlendShapeTransitionToNewFrame(Dictionary<string, double> changesDict, float durationInSeconds)
     {
         if (Instance.TryGetComponent<WoZRoom>(out var woZRoom) == false)
             return;
-        woZRoom  = Instance.GetComponent<WoZRoom>();
         WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
         {
             EventName = EnumEvents.RequestAvatarBlendshapeTransition.Name,
@@ -282,7 +273,7 @@ public class NetworkManager : MonoBehaviour
             {
                 roomId = woZRoom.RoomId,
                 blendshapeTransitionData = new AvatarBlendshapeTransitionData
-                    { BlendshapeDict = changesDict, Value = changesDict, Duration = durationInSeconds.ToString() }
+                    { BlendshapeDict = changesDict, Duration = durationInSeconds.ToString() }
             }
         }));
     }

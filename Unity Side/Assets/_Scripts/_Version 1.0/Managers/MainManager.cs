@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.IO;
 using System.Threading.Tasks;
 using RockVR.Video;
 using UnityEngine;
@@ -232,7 +233,6 @@ public class MainManager : MonoBehaviour
     private void ExecuteActionForCurrentFrame(AvatarAction action)
     {
         Frame frameExecuted = action.ActionFrameList.Frames[action.FrameManager.FrameNb];
-        Frame poseFrameExecuted = action.PoseFrameList?.Frames[action.FrameManager.FrameNb];
 
         // Audio
         if (action.ContainsAudio && action.FrameManager.FrameNb == 0)
@@ -242,8 +242,9 @@ public class MainManager : MonoBehaviour
 
         // Visual
 
-        if (poseFrameExecuted?.PoseDict != null)
+        if (Path.GetExtension(action.CsvFilePath) == ".json")
         {
+            Frame poseFrameExecuted = action.PoseFrameList?.Frames[action.FrameManager.FrameNb];
             BlendShapesController.BlendshapeListUpdateForFrame(frameExecuted,
                 action.FrameManager.FrameNb != 0
                     ? action.ActionFrameList.Frames[action.FrameManager.FrameNb - 1]
@@ -251,14 +252,15 @@ public class MainManager : MonoBehaviour
 
             HeadPoseController.HeadPoseUpdateByFrameAndPrevious(poseFrameExecuted,
                 action.FrameManager.PoseFrameNb != 0
-                    ? action.PoseFrameList.Frames[action.FrameManager.PoseFrameNb - 1]
+                    ? action.PoseFrameList?.Frames[action.FrameManager.PoseFrameNb - 1]
                     : null);
         }
 
-        if (poseFrameExecuted?.PoseDict == null)
+        if (Path.GetExtension(action.CsvFilePath) == ".csv")
         {
+            Frame poseFrameExecuted = action.PoseFrameList?.Frames[action.FrameManager.FrameNb];
             BlendShapesController.BlendShapeUpdateForFrame(frameExecuted);
-            HeadPoseController.HeadPoseUpdateByFrame(frameExecuted);
+            HeadPoseController.HeadPoseUpdateByFrame(poseFrameExecuted);
         }
 
         // End
@@ -294,9 +296,7 @@ public class MainManager : MonoBehaviour
             {
                 frameToBeExecutedNext =
                     _currentAvatarAction.ActionFrameList.Frames[_currentAvatarAction.FrameManager.FrameNb];
-
-                poseFrameToBeExecutedNext =
-                    _currentAvatarAction.PoseFrameList.Frames[_currentAvatarAction.FrameManager.PoseFrameNb];
+                poseFrameToBeExecutedNext = _currentAvatarAction.PoseFrameList?.Frames[_currentAvatarAction.FrameManager.FrameNb];
             }
 
             // if we already passed the current frame we go to the next one
@@ -304,11 +304,10 @@ public class MainManager : MonoBehaviour
             {
                 frameToBeExecutedNext =
                     _currentAvatarAction.ActionFrameList.Frames[_currentAvatarAction.FrameManager.FrameNb + 1];
-
-                poseFrameToBeExecutedNext =
-                    _currentAvatarAction.PoseFrameList.Frames[_currentAvatarAction.FrameManager.PoseFrameNb + 1];
+                poseFrameToBeExecutedNext = _currentAvatarAction.PoseFrameList?.Frames[_currentAvatarAction.FrameManager.FrameNb + 1];
             }
 
+            // Debug.Log(poseFrameToBeExecutedNext);
             BlendShapesController.TransitionBetweenFrames(frameToBeExecutedNext, _transitionDuration);
             HeadPoseController.TransitionToPoseOverTime(poseFrameToBeExecutedNext.PoseDict, _transitionDuration);
 

@@ -61,11 +61,13 @@ public class WoZRoom:Room
 
     public override void Emit(string eventName, string data,string clientId)
     {
+        _logger.LogInformation($"Emitting message to client {clientId} data {eventName} {data} ");
         _clients.Find(client => client.ClientId.ToString() == clientId)?.Emit(eventName, data);
     }
 
     public override void Emit(string message, string clientId)
     {
+        _logger.LogInformation($"Emitting message to client {clientId} data {message}");
         _clients.Find(client => client.ClientId.ToString() == clientId)?.Emit(message);
     }
   

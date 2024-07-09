@@ -190,3 +190,7 @@ ___
 - [Pierre-Luc MILLET](https://github.com/Pierre-LucM)- pierre-luc.millet@student.junia.com - ACT Dev
 - [Arthur PINEAU](https://github.com/Arthur-P0) - arthur.pineau@student.junia.com - ACT Dev
 - [Armand DEFFRENNES](https://github.com/JambonPasFrais) - armand.deffrennes@student.junia.com - ACT Dev
+=======
+## Openface 
+
+You will need openface with a websocket support to use ACT. You will find it at [Openface Websocket](https://github.com/numediart/openface_act)

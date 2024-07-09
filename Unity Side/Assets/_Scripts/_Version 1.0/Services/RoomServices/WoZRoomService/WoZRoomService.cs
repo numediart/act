@@ -14,6 +14,7 @@ namespace _Scripts._Version_1._0.Services.RoomServices.WoZRoomService
     public class WoZRoomService:AbstractRoomServices
     {
         
+        
         public void OnAvatarHeadMove (AvatarHeadMoveData data)
         {
             AvatarHeadMoveData avatarHeadMoveData = data;
@@ -27,7 +28,7 @@ namespace _Scripts._Version_1._0.Services.RoomServices.WoZRoomService
         public void OnBlendshapesTransition(Dictionary<string,double> data, float duration)
         {
             Dictionary<string,double> avatarBlendshapeData = data;
-            MainManager.Instance.BlendShapesController.TransitionToDict(avatarBlendshapeData, duration);
+           MainManager.Instance.BlendShapesController.TransitionToDict(avatarBlendshapeData, duration);
         }
 
         public void OnAvatarPoseTransition(Vector3 data, float duration)

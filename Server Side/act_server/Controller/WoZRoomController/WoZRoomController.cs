@@ -224,6 +224,7 @@ namespace act_server.Controller.WoZRoomController
             try
             {
                 var avatarHeadMoveData = JsonConvert.DeserializeObject<WoZAvatarHeadMoveData>(data);
+                PLogger.LogInformation("Avatar head move data: {0}", avatarHeadMoveData.HeadMoveData);
                    if (avatarHeadMoveData == null)
                 {
                     PLogger.LogError("Avatar head move data is null.");
@@ -278,7 +279,7 @@ namespace act_server.Controller.WoZRoomController
                 }
 
                 PRoomService.OnRequestAvatarBlendshapeTransition(avatarBlendshapeTransitionData.RoomId, clientId,
-                    new AvatarBlendshapeTransitionData(avatarBlendshapeTransitionData.BlendshapeTransitionData, "",
+                    new AvatarBlendshapeTransitionData(avatarBlendshapeTransitionData.BlendshapeTransitionData.BlendshapeDict, "",
                         avatarBlendshapeTransitionData.Duration));
             }
             catch (Exception ex)
@@ -293,16 +294,14 @@ namespace act_server.Controller.WoZRoomController
 
             try
             {
-                PLogger.LogInformation("Avatar pose transition data: {0}", data);
                 var avatarPoseTransitionData = JsonConvert.DeserializeObject<WoZAvatarPoseTransitionData>(data);
-                PLogger.LogInformation("Avatar pose transition data: {0}", avatarPoseTransitionData.PoseTransitionData.x);
                 if (avatarPoseTransitionData == null)
                 {
                     PLogger.LogError("Avatar pose transition data is null.");
                     return;
                 }
 
-                PRoomService.OnRequestAvatarPoseTransition(avatarPoseTransitionData.RoomId, clientId,
+                PRoomService.OnRequestAvatarPoseTransition(avatarPoseTransitionData!.RoomId, clientId,
                     avatarPoseTransitionData.PoseTransitionData);
             }
             catch (Exception ex)
