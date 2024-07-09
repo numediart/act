@@ -32,7 +32,7 @@ namespace RockVR.Video.Editor
                 }
                 else
                 {
-                    PathConfig.SaveFolder = "";
+                    PathConfig.SaveFolder = "C:\\Users\\arthu\\Desktop\\Stage\\ACT\\Unity Side\\Assets\\Data\\MP4";
                 }
                 GUILayout.Label(PathConfig.SaveFolder);
             }

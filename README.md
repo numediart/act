@@ -3,7 +3,7 @@
 <div align="center">
   <p align="center">
     The Avatar Controller Toolkit (ACT) is a tool developped to enhance the visualisation of any expression model which would be performed by an agent, Lou, we have created using Blender.
-    The ACT project uses the power of Unity and Blender, mixed in a tool made for the users.
+    The ACT project uses the power of Unity and Blender, mixed in a tool made for the users. The advantage of our project is you have no constraints for the choice of model you want to use. You can plug your own model on the server and use the avatar.
     <br />
     <br />
     <a href="https://github.com/numediart/ACT/wiki">View Wiki</a>
@@ -19,7 +19,9 @@ Here's a preview of what you will find in that repository. To make it simple, we
 
 In doing so, we ended creating a video exporter, where you can create a sequence of expression you want the avatar to perform and export it as a MP4 file.
 
-Plus, a Wizard of Oz experiment interface that allows you to perform wizard of oz experiment easely, using a server and a build of the project. If you are not familiar with wizard of oz experiments, please follow this [link](https://en.wikipedia.org/wiki/Wizard_of_Oz_experiment).
+We have also implemented Wizard of Oz experiment interface that allows you to perform wizard of oz experiment easely, using a server and a build of the project. If you are not familiar with wizard of oz experiments, please follow this [link](https://en.wikipedia.org/wiki/Wizard_of_Oz_experiment).
+
+Finally, we have implemented live streaming experiment, where you can use your model (here openface) with your webcam and have the movements of the head, mouth, etc. transmitted live to the avatar.
 
 In the future, we want to improve the toolkit's modularity, where you will be able to add your own avatar, use different types of expression, not only .csv, and respond to the need of the scientific community.
 
@@ -30,7 +32,17 @@ This project has highly been inspired by an older project we made in Godoot Engi
 <!-- GETTING STARTED -->
 ## Getting Started
 
-Everything you need to know to use the project is precised in the wiki of the repository, find the link [here](https://github.com/numediart/ACT/wiki)
+1. Download the project
+2. In the folder "Server Side", open the solution "act_server.sln"
+3. Start the solution
+4. Open the folder "Unity Side" on Unity
+5. Go to the scene "Ver 1.0 - Menu", in the folder "Scene"
+6. Launch the unity project, Here you have Four Choice :
+   - Configuration : You can configurate the setting of record and add csv file with your expression
+   - Record : Here you can create a video of a sequence of expression you have made
+   - Wizard Of Oz : In this part, You create a room to control the avatar with expression you made
+   - Live Stream : With openface or your model, you can control avatar, use lipsync and record our expression
+   > [!WARNING] To use livestream, check the video : ![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Readme_Vid/Tutorial_LiveStream.mp4)
 
 <!-- HOW ? -->
 ## How does it work ?
@@ -54,8 +66,7 @@ If you want to contribute to the project, please follow the steps below :
 
 <!-- TODO -->
 ## To Do
-* Create a rewind button to replay a queue we created
-* Make a configuration interface to change the avatar
+* 
 
 <!-- LICENSE -->
 ## License

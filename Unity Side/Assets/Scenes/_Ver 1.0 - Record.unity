@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.3069224, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2011,7 +2011,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 821665457}
   m_HandleRect: {fileID: 821665456}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 1.0000018
   m_Size: 0.915
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -3358,6 +3358,14 @@ PrefabInstance:
     - target: {fileID: 6966583417519666023, guid: b33d7b65f9fa45040bc61a01f5a9fa8d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7004629179711226431, guid: b33d7b65f9fa45040bc61a01f5a9fa8d, type: 3}
+      propertyPath: customPath
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7004629179711226431, guid: b33d7b65f9fa45040bc61a01f5a9fa8d, type: 3}
+      propertyPath: customPathFolder
+      value: C:\Users\arthu\Desktop\Stage\ACT\Unity Side\Assets\Data\MP4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
