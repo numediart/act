@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using _Scripts._Version_1._0.Controllers.RoomController;
@@ -176,10 +177,20 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
         {
             Debug.Log("Record Button Clicked");
             _isRecording = true;
+            _incomingLiveStreamDataList.Clear();
+            _incomingPoseList.Clear();
             recordingButton.onClick.RemoveAllListeners();
             recordingButton.onClick.AddListener(OnStopButtonClicked);
             _previousTime = Time.time;
+            StartCoroutine(StopRecording(10.0f));
             
+        }
+
+        private IEnumerator StopRecording(float time)
+        {
+            yield return new WaitForSeconds(time);
+            if(_isRecording)
+                OnStopButtonClicked();
         }
         public void OnStopButtonClicked()
         {
@@ -187,9 +198,8 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
             // stop recording and save the JSON file
             double endTime = Time.time;
             int incomingLiveStreamDataCount = _incomingLiveStreamDataList.Count;
-            int targetFPS = incomingLiveStreamDataCount / (int)(endTime - _previousTime);// calculate the target FPS based on the number of frames and the time
-            
-            RecordData recordData = new RecordData(_incomingLiveStreamDataList, _incomingPoseList, targetFPS);
+         
+            RecordData recordData = new RecordData(_incomingLiveStreamDataList, _incomingPoseList);
             string json = JsonConvert.SerializeObject(recordData.ToJson());
             // open file dialog to choose the path and the name of the file
           
@@ -200,6 +210,7 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
             _isRecording = false;
             recordingButton.onClick.RemoveAllListeners();
             recordingButton.onClick.AddListener(OnRecordButtonClicked);
+     
         }
     }
 }

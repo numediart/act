@@ -38,28 +38,20 @@ namespace _Scripts._Version_1._0.Managers.Network.WebSocket
             _ = Receive();
         }
 
-        private SemaphoreSlim sendSemaphore = new SemaphoreSlim(1);
 
         public async Task Send(string message)
         {
-            await sendSemaphore.WaitAsync();
-            try
-            {
+        
                 var buffer = new ArraySegment<byte>(System.Text.Encoding.UTF8.GetBytes(message));
                 await _clientWebSocket.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
-            }
-            finally
-            {
-                sendSemaphore.Release();
-            }
         }
 
-        public async Task Receive()
+        private async Task Receive()
         {
             try
             {
                 StringBuilder stringBuilder = new StringBuilder();
-                var bufferSize = 4096; // Set an appropriate buffer size
+                var bufferSize = 8192; // Set an appropriate buffer size
                 var buffer = new ArraySegment<byte>(new byte[bufferSize]);
 
                 while (_clientWebSocket.State == WebSocketState.Open)
@@ -67,12 +59,12 @@ namespace _Scripts._Version_1._0.Managers.Network.WebSocket
                     var result = await _clientWebSocket.ReceiveAsync(buffer, CancellationToken.None);
                     if (result.MessageType == WebSocketMessageType.Close)
                     {
-                        await Close();
+                        _clientWebSocket.CloseAsync(WebSocketCloseStatus.EndpointUnavailable, "Closing due to EndPoint unavailable", CancellationToken.None).Wait();
                         return;
                     }
 
                     // Append the received bytes to the StringBuilder
-                    stringBuilder.Append(Encoding.UTF8.GetString(buffer.Array, 0, result.Count));
+                    stringBuilder.Append(Encoding.UTF8.GetString(buffer.Array ?? Array.Empty<byte>(), 0, result.Count));
 
                     // Check if the message is complete
                     if (result.EndOfMessage)
@@ -89,6 +81,7 @@ namespace _Scripts._Version_1._0.Managers.Network.WebSocket
             catch (WebSocketException ex) when (ex.WebSocketErrorCode == WebSocketError.ConnectionClosedPrematurely)
             {
                 Console.WriteLine("Connection closed unexpectedly.");
+                
             }
             catch (Exception e)
             {
@@ -98,7 +91,7 @@ namespace _Scripts._Version_1._0.Managers.Network.WebSocket
 
         public async Task Close()
         {
-            _clientWebSocket.Abort();
+            _clientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None).Wait();
             WebsocketManager._instance = null;
         }
     }

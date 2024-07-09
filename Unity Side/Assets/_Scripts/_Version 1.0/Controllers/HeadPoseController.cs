@@ -184,7 +184,7 @@ public class HeadPoseController : MonoBehaviour
     private void SendHeadPoseTransitionToUser(Vector3 futureRot, float transitionDuration)
     {
         
-            NetworkManager.Instance.AvatarPoseTransitionToNewFrame(JsonConvert.SerializeObject(new {x=futureRot.x, y=futureRot.y, z=futureRot.z}), transitionDuration);
+            NetworkManager.Instance.AvatarPoseTransitionToNewFrame(futureRot, transitionDuration);
         
     }
     

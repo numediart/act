@@ -19,10 +19,9 @@ public struct AvatarHeadMoveData
     public double z;
 }
 
-public  struct AvatarBlendshapeMoveData
+public struct AvatarBlendshapeMoveData
 {
-    public string BlendshapeDict;
-    public string Value;
+    public Dictionary<string, double> BlendshapeDict;
 }
 
 public struct AvatarBlendshapeTransitionData
@@ -31,20 +30,19 @@ public struct AvatarBlendshapeTransitionData
     public string Value;
     public float Duration;
 
-    public AvatarBlendshapeTransitionData(Dictionary<string,double> blendshapeDict, string value, float duration)
+    public AvatarBlendshapeTransitionData(Dictionary<string, double> blendshapeDict, string value, float duration)
     {
         BlendshapeDict = blendshapeDict;
         Value = value;
         Duration = duration;
     }
-
 }
 
 public struct AvatarPoseTransitionData
 {
-    public float x;
-    public float y;
-    public float z;
+    public double x;
+    public double y;
+    public double z;
     public string Duration;
 }
 
@@ -170,7 +168,8 @@ public class WoZRoomService(ILogger<WoZRoom> logger, MainWebSocketService.MainWe
                 foreach (Client.Client client in room.Clients)
                 {
                     if (client.ClientId.ToString() != clientId)
-                        room.Emit(EnumEvents.AvatarHeadMove.Name, JsonConvert.SerializeObject(new {x=data.x, y=data.y,z=data.z}),
+                        room.Emit(EnumEvents.AvatarHeadMove.Name,
+                            JsonConvert.SerializeObject(new { x = data.x, y = data.y, z = data.z }),
                             client.ClientId.ToString());
                 }
 
@@ -190,10 +189,11 @@ public class WoZRoomService(ILogger<WoZRoom> logger, MainWebSocketService.MainWe
             {
                 foreach (Client.Client client in room.Clients)
                 {
-                    if(client.ClientId.ToString() != clientId)
-                    room.Emit(EnumEvents.AvatarBlendshapeMove.Name,
-                        JsonConvert.SerializeObject(new { BlendshapeDict = avatarBlendshapeMoveData.BlendshapeDict, Value = avatarBlendshapeMoveData.Value}),
-                        client.ClientId.ToString());
+                    if (client.ClientId.ToString() != clientId)
+                        room.Emit(EnumEvents.AvatarBlendshapeMove.Name,
+                            JsonConvert.SerializeObject(
+                                new { BlendshapeDict = avatarBlendshapeMoveData.BlendshapeDict }),
+                            client.ClientId.ToString());
                 }
 
                 return;
@@ -213,13 +213,13 @@ public class WoZRoomService(ILogger<WoZRoom> logger, MainWebSocketService.MainWe
                 foreach (Client.Client client in room.Clients)
                 {
                     if (client.ClientId.ToString() != clientId)
-                    room.Emit(EnumEvents.AvatarBlendshapeTransition.Name,
-                        JsonConvert.SerializeObject(new
-                        {
-                            blendshapeDict = blendshapeTransitionData.BlendshapeDict,
-                            duration = blendshapeTransitionData.Duration
-                        }),
-                        client.ClientId.ToString());
+                        room.Emit(EnumEvents.AvatarBlendshapeTransition.Name,
+                            JsonConvert.SerializeObject(new
+                            {
+                                blendshapeDict = blendshapeTransitionData.BlendshapeDict,
+                                duration = blendshapeTransitionData.Duration
+                            }),
+                            client.ClientId.ToString());
                 }
 
                 return;
@@ -239,13 +239,13 @@ public class WoZRoomService(ILogger<WoZRoom> logger, MainWebSocketService.MainWe
                 foreach (Client.Client client in room.Clients)
                 {
                     if (client.ClientId.ToString() != clientId)
-                    room.Emit(EnumEvents.AvatarPoseTransition.Name,
-                        JsonConvert.SerializeObject(new
-                        {
-                            x = poseTransitionData.x, y = poseTransitionData.y, z = poseTransitionData.z,
-                            duration = poseTransitionData.Duration
-                        }),
-                        client.ClientId.ToString());
+                        room.Emit(EnumEvents.AvatarPoseTransition.Name,
+                            JsonConvert.SerializeObject(new
+                            {
+                                x = poseTransitionData.x, y = poseTransitionData.y, z = poseTransitionData.z,
+                                Duration = poseTransitionData.Duration
+                            }),
+                            client.ClientId.ToString());
                 }
 
                 return;
