@@ -175,7 +175,7 @@ namespace act_server.Utils.AU2BlendShapes
             case "AU06":
                 AddBlendShape("Expressions_cheekSneerL_max", value * 0.7f);
                 AddBlendShape("Expressions_cheekSneerR_max", value * 0.7f);
-                AddBlendShape("Expressions_mouthSmile_max", value * 0.65f);
+                AddBlendShape("Expressions_mouthSmile_max", value * 0.50f);
                 AddBlendShape("Expressions_browOutVertL_max", value * 0.35f);
                 AddBlendShape("Expressions_browOutVertR_max", value * 0.35f);
                 break;
@@ -188,54 +188,54 @@ namespace act_server.Utils.AU2BlendShapes
             case "AU09":
                 AddBlendShape("Expressions_cheekSneerL_max", value);
                 AddBlendShape("Expressions_cheekSneerR_max", value);
-                AddBlendShape("Expressions_eyeClosedPressureL_max", value * 0.6f);
-                AddBlendShape("Expressions_eyeClosedPressureR_max", value * 0.6f);
-                AddBlendShape("Expressions_mouthOpenAggr_max", value * 0.8f);
+                AddBlendShape("Expressions_eyeClosedPressureL_max", value * 0.5f);
+                AddBlendShape("Expressions_eyeClosedPressureR_max", value * 0.5f);
+                AddBlendShape("Expressions_mouthOpenAggr_max", value * 0.7f);
                 AddBlendShape("Expressions_nostrilsExpansion_max", value * 0.7f);
                 break;
             case "AU10":
                 AddBlendShape("Expressions_cheekSneerL_max", value);
                 AddBlendShape("Expressions_cheekSneerR_max", value);
-                AddBlendShape("Expressions_mouthOpenAggr_max", value * 0.8f);
+                AddBlendShape("Expressions_mouthOpenAggr_max", value / 0.8f);
                 AddBlendShape("Expressions_nostrilsExpansion_max", value);
                 break;
             case "AU12":
-                AddBlendShape("Expressions_mouthSmile_max", value);
+                AddBlendShape("Expressions_mouthSmile_max", value / 0.5f);
                 break;
             case "AU14":
-                AddBlendShape("Expressions_mouthSmileL_max", value * 0.85f);
-                AddBlendShape("Expressions_mouthSmileR_max", value * 0.85f);
-                AddBlendShape("Expressions_mouthSmileOpen_max", value * 0.8f);
+                AddBlendShape("Expressions_mouthSmileL_max", value * 0.75f);
+                AddBlendShape("Expressions_mouthSmileR_max", value * 0.75f);
+                AddBlendShape("Expressions_mouthSmileOpen_max", value * 0.7f);
                 break;
             case "AU15":
-                AddBlendShape("Expressions_mouthSmile_max", value * 0.6f);
+                AddBlendShape("Expressions_mouthSmile_max", value);
                 break;
             case "AU17":
                 AddBlendShape("Expressions_mouthSmileOpen2_max", value * 0.85f);
                 AddBlendShape("Expressions_mouthLowerOut_max", value * 0.7f);
                 break;
             case "AU20":
-                AddBlendShape("Expressions_mouthClosed_max", value * 0.9f);
+                AddBlendShape("Expressions_mouthClosed_max", value * 0.8f);
                 AddBlendShape("Expressions_mouthSmileL_max", value * 0.7f);
-                AddBlendShape("Expressions_mouthSmileR_max", value * 0.65f);
+                AddBlendShape("Expressions_mouthSmileR_max", value * 0.7f);
                 break;
             case "AU23":
-                AddBlendShape("Expressions_mouthOpen_max", value * 0.85f);
+                AddBlendShape("Expressions_mouthOpen_max", value * 0.50f);
                 break;
             case "AU25":
                 AddBlendShape("Expressions_mouthClosed_min", 0.0f);
-                AddBlendShape("Expressions_mouthOpenTeethClosed_max", value * 0.55f);
+                AddBlendShape("Expressions_mouthOpenTeethClosed_max", value * 0.8f);
                 break;
             case "AU26":
-                AddBlendShape("Expressions_mouthOpenLarge_max", value * 0.85f);
-                AddBlendShape("Expressions_mouthChew_max", value * 0.6f);
+                AddBlendShape("Expressions_mouthOpenLarge_max", value * 0.7f);
+                AddBlendShape("Expressions_mouthChew_max", value * 0.2f);
                 break;
             case "AU45":
-                AddBlendShape("Expressions_eyeClosedL_max", value);
-                AddBlendShape("Expressions_eyeClosedR_max", value);
+                AddBlendShape("Expressions_eyeClosedL_max", value / 0.5f);
+                AddBlendShape("Expressions_eyeClosedR_max", value / 0.5f);
                 break;
             case "AU61":
-                AddBlendShape("Expressions_eyesHoriz_min", 0.0f);
+                AddBlendShape("Expressions_eyesHoriz_min", value);
                 break;
             case "AU62":
                 AddBlendShape("Expressions_eyesHoriz_max", value);
@@ -244,7 +244,7 @@ namespace act_server.Utils.AU2BlendShapes
                 AddBlendShape("Expressions_eyesVert_max", value);
                 break;
             case "AU64":
-                AddBlendShape("Expressions_eyesVert_min", 0.0f);
+                AddBlendShape("Expressions_eyesVert_min", value);
                 break;
             default:
                 Console.WriteLine($"Unknown action unit: {actionUnitName}");

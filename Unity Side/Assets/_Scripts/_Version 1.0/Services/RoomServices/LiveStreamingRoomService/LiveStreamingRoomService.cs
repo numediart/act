@@ -99,7 +99,7 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
                     int blendShapeIndex = skinnedMeshRenderer.sharedMesh.GetBlendShapeIndex(currentBlendShape.Key);
                     if (blendShapeIndex != -1)
                     {
-                        skinnedMeshRenderer.SetBlendShapeWeight(blendShapeIndex, currentBlendShape.Value * 60f);
+                        skinnedMeshRenderer.SetBlendShapeWeight(blendShapeIndex, currentBlendShape.Value * 55f);
                         previousActionUnit.BlendShapeList[actionUnit.BlendShapeList.IndexOf(currentBlendShape)].Value =
                             currentBlendShape.Value;    
          
