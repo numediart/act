@@ -54,6 +54,7 @@ namespace _Scripts._Version_1._0.Controllers.RoomController
 
         private void OnActionUnitsReceived(string data)
         {
+            Debug.Log("Action Units Received , Data : " + data);
             _incomingLiveStreamData = JsonConvert.DeserializeObject<IncomingLiveStreamData>(data);
             _liveStreamingRoomService.OnActionUnitsReceived(_incomingLiveStreamData);
         }
