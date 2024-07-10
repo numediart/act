@@ -26,6 +26,8 @@ public class LiveStreamingRoomService(ILogger<LiveStreamingRoom> logger, MainWeb
         LiveStreamingRoom room = new LiveStreamingRoom(Logger);
         _mainWebSocketService.RegisterWebsocketService<ConnectionBehavior>("/openface/ActionUnit/" + room.RoomId);
         _mainWebSocketService.RegisterWebsocketService<ConnectionBehavior>("/openface/AudioData/" + room.RoomId);
+        _mainWebSocketService.RegisterWebsocketService<ConnectionBehavior>("/mediapipe/blendshapedata/" + room.RoomId);
+        
         logger.LogInformation("Room created with id: " + room.RoomId);
         room.InitRoom(roomCreationData.RoomOwner ?? "", roomCreationData.RoomName, roomCreationData.Password);
         
@@ -120,13 +122,20 @@ public class LiveStreamingRoomService(ILogger<LiveStreamingRoom> logger, MainWeb
 
     public void OnRequestLiveStreamRoomInfos(string clientId)
     {
-      
-        List<RoomInfo> roomInfos = new List<RoomInfo>();
-        foreach (var room in Rooms)
+        List<object> roomInfos = new List<object>();
+        if (Rooms.Values.Count == 0)
         {
-            roomInfos.Add(new RoomInfo(room.Value.RoomName, room.Value.RoomOwner,room.Value.RoomId.ToString(), room.Value.HasPassword(), room.Value.Clients.Count));
+            mainWebSocketService.GetClient(clientId).Emit(EnumEvents.LiveStreamingRoomsInfos.Name, roomInfos);
+            return;
         }
-        mainWebSocketService.GetClient(clientId).Emit("LiveStreamingRoomInfos", roomInfos);
+
+        foreach (LiveStreamingRoom room in Rooms.Values)
+        {
+            roomInfos.Add(new RoomInfo(room.RoomName, room.RoomOwner, room.RoomId.ToString(), room.HasPassword(),
+                room.Clients.Count).ToJson());
+        }
+
+        mainWebSocketService.GetClient(clientId).Emit(EnumEvents.LiveStreamingRoomsInfos.Name, roomInfos);
     }
 
     public struct poseData
@@ -193,7 +202,21 @@ public class LiveStreamingRoomService(ILogger<LiveStreamingRoom> logger, MainWeb
             Logger.LogError("Room not found");
         }
     }
-
+    
+    public void OnMediaPipeBlendshapeData(string roomId, string clientId, ActionUnit[] data)
+    {
+        if (Rooms.TryGetValue(roomId, out LiveStreamingRoom room))
+        {
+            
+            room.BroadcastToRoom(new WebsocketMessage(EnumEvents.LiveStreamingData.Name, data.ToString()).ToJson());
+        }
+        else
+        {
+            Logger.LogError("Room not found");
+        }
+    }
+    
+    
     /// <summary>
     /// send to openface the room id which the client is in, should be done once after room is created
     /// </summary>
