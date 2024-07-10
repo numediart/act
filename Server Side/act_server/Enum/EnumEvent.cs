@@ -30,6 +30,8 @@ public class EnumEvents : Enumeration<EnumEvents>
     public static readonly EnumEvents EmitActionUnit = new EnumEvents(GetNextValue(), "EmitActionUnit");
     public static readonly EnumEvents EmitAudioData = new EnumEvents(GetNextValue(), "EmitAudioData");
     public static readonly EnumEvents OnRoomId = new EnumEvents(GetNextValue(), "OnRoomId");
+    
+    public static readonly EnumEvents MediapipeBlendshape = new EnumEvents(GetNextValue(), "MediapipeBlendshape");
 
     #endregion
 

@@ -100,6 +100,7 @@ public class MainWebSocketService
                     liveStreamingRoom.Dispose();
                     UnregisterWebsocketService("/openface/ActionUnit/" + room.RoomId);
                     UnregisterWebsocketService("/openface/Audio/" + room.RoomId);
+                    UnregisterWebsocketService("/mediapipe/blendshapedata/" + room.RoomId);
                 }
                 _rooms.Remove(room);
             }

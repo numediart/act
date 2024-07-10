@@ -43,6 +43,8 @@ public sealed class LiveStreamingRoomController
 
         PEventManagerService.On(EnumEvents.EmitActionUnit.Name, OnActionUnitData);
         PEventManagerService.On(EnumEvents.EmitAudioData.Name, OnAudioData);
+        PEventManagerService.On(EnumEvents.MediapipeBlendshape.Name, OnMediaPipeBlendshapeData);
+        
     }
 
     /// <summary>
@@ -238,6 +240,34 @@ public sealed class LiveStreamingRoomController
         catch (Exception ex)
         {
             PLogger.LogError(ex, "Error processing audio data request.");
+        }
+    }
+    
+    public class MediaPipeBlendshapeData
+    {
+        public string RoomId;
+        public ActionUnit[] _actionUnit;
+    }
+    
+    private void OnMediaPipeBlendshapeData(string data, string clientId)
+    {
+        if (PLogger == null || PRoomService == null) return;
+
+        try
+        {
+            PLogger.LogInformation("Received mediapipe blendshape data" + data);
+            MediaPipeBlendshapeData blendshapeData = JsonConvert.DeserializeObject<MediaPipeBlendshapeData>(data);
+            if (blendshapeData.Equals(null))
+            {
+                PLogger.LogError("Blendshape data is null.");
+                return;
+            }
+
+            PRoomService.OnMediaPipeBlendshapeData(blendshapeData.RoomId, clientId, blendshapeData._actionUnit);
+        }
+        catch (Exception ex)
+        {
+            PLogger.LogError(ex, "Error processing blendshape data request.");
         }
     }
 }
