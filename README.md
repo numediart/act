@@ -50,7 +50,11 @@ This project has highly been inspired by an older project we made in Godoot Engi
 <!-- HOW ? -->
 ## How does it work ?
 
-The current state of the project supports *OpenFace expressions*. Which means that if you motion tracking software doesn't output a csv file in the same manner as OpenFace, you won't be able to use this tool.
+For LiveStreaming : Actually, it's support one model [Openface](https://github.com/numediart/openface_act) .We use it to get action unit. We formatted action unit into json and sent to the server. The server transform it to blendshape which can be read by Unity to move the avatar.
+
+For Record : Add your expression in .csv or .json in the configuration menu. Unity read the file and process it to the avatar to create a record of your different expression
+
+For Wizard of Oz : You have one agent, who is the admin, and a client. The agent send expression to the client through the server.
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -69,7 +73,15 @@ If you want to contribute to the project, please follow the steps below :
 
 <!-- TODO -->
 ## To Do
-* 
+* Improving mediapipe
+* Improve server connection reliability
+* Improve the current avatar add blendshapes
+* Debugging the Wizard of Oz and the Record (lag on the avatar)
+* Plugin system for modding/adding features
+* Add error handling on the client and server
+* Make mediapipe and openface connections more reliable
+* Server unit test
+* Optimise data formatting
 
 <!-- LICENSE -->
 ## License
