@@ -174,7 +174,7 @@ public class NetworkManager : MonoBehaviour
         // Send request to server
         await WebsocketManager.Instance.Send(JsonConvert.SerializeObject(new
         {
-            EventName = EnumEvents.RequestLiveStreamingRoom.Name, Data = new { RoomId = id, Password = password }
+            EventName = EnumEvents.RequestLiveStreamingRoomJoin.Name, Data = new { RoomId = id, Password = password }
         }));
     }
 

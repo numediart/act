@@ -88,7 +88,11 @@ public sealed class LiveStreamingRoomController
         try
         {
             RequestRoomJoinData roomJoinData = JsonConvert.DeserializeObject<RequestRoomJoinData>(data);
-        
+            if (roomJoinData.Equals(null))
+            {
+                PLogger.LogError("Room join data is null.");
+                return;
+            }
 
             PRoomService.OnRequestRoomJoin(roomJoinData.RoomId, clientId, roomJoinData.Password);
         }

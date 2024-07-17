@@ -1,10 +1,10 @@
 [
   {
-    "Name": "test Arthur",
+    "Name": "test",
     "AvatarActions": [
       {
         "Intensity": 0,
-        "CsvFilePath": "C:\\Users\\arthu\\Downloads\\20240709_095549.csv",
+        "CsvFilePath": "C:\\Users\\pierr\\Downloads\\Intensity\\0.json",
         "AudioFilePath": "",
         "Csv": null,
         "Audio": null,
@@ -29,15 +29,38 @@
           "PoseFrameNbToStopIfTransition": 0,
           "PoseFrameNbToStartIfTransition": 0
         }
-      }
-    ]
-  },
-  {
-    "Name": "Test Arthur 30fps",
-    "AvatarActions": [
+      },
       {
         "Intensity": 0,
-        "CsvFilePath": "C:\\Users\\arthu\\Downloads\\20240709_103929.csv",
+        "CsvFilePath": "C:\\Users\\pierr\\Downloads\\BasicExpressions (1)\\BasicExpressions\\Idle_1.csv",
+        "AudioFilePath": "",
+        "Csv": null,
+        "Audio": null,
+        "ContainsAudio": false,
+        "Duration": 0.0,
+        "PoseDuration": 0.0,
+        "ActionFrameList": {
+          "Frames": null
+        },
+        "PoseFrameList": {
+          "Frames": null
+        },
+        "FrameManager": {
+          "FrameNb": 0,
+          "Fps": 0,
+          "MaxFrameNb": 0,
+          "FrameNbToStopIfTransition": 0,
+          "FrameNbToStartIfTransition": 0,
+          "PoseFrameNb": 0,
+          "PoseFps": 0,
+          "PoseMaxFrameNb": 0,
+          "PoseFrameNbToStopIfTransition": 0,
+          "PoseFrameNbToStartIfTransition": 0
+        }
+      },
+      {
+        "Intensity": 0,
+        "CsvFilePath": "C:\\Users\\pierr\\Downloads\\BasicExpressions (1)\\BasicExpressions\\Nodding.csv",
         "AudioFilePath": "",
         "Csv": null,
         "Audio": null,

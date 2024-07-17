@@ -145,7 +145,7 @@ public class LivestreamingRoomManager : AbstractRoomSelection<List<Livestreaming
         _rooms.Clear();
     }
 
-    public new static void JoinRoom(string password, string id, GameObject roomPrefab)
+    public static void JoinRoom(string password, string id, GameObject roomPrefab)
     {
         NetworkManager.Instance.JoinLiveStreamingRoom(id, password);
         EventManager.Instance.On(EnumEvents.LivestreamingRoomJoined.Name, data =>

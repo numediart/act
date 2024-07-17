@@ -48,10 +48,10 @@ public class LiveStreamingRoomService(ILogger<LiveStreamingRoom> logger, MainWeb
     {
         if (Rooms.TryGetValue(roomId, out LiveStreamingRoom room))
         {
-            if (room.VerifyPassword(password??""))
+            if (password!= null && room.VerifyPassword(password))
             {
                 room.AddClient(mainWebSocketService.GetClient(clientId));
-                mainWebSocketService.GetClient(clientId).Emit("RoomJoined", room.RoomId.ToString());
+                mainWebSocketService.GetClient(clientId).Emit(EnumEvents.LivestreamingRoomJoined.Name, room.RoomId.ToString());
             }
             else
             {
