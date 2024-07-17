@@ -54,6 +54,12 @@ Here you have 4 choice :
 
   All the expression record are on your left, you can press on it to see the expression in action.
 
+  Block Diagram :
+
+  ![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/Communication.png)
+
+  ![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/Avatarmove.png)
+
 
 - LiveStreaming : 
 > [!WARNING] 
@@ -69,6 +75,12 @@ You can record your expression in realtime, and you can change the parameter of 
 
 We use openface, who sends these action unit to our server. In the server, the action unit are transform to BlendShape expression. One action unit is linked to several BlendShape.
 We take the value of the action unit and we adjust it to work on Unity BlenShape. After this conversion, we send a Json File with all BlendShape name and value and we apply it to the avatar.
+
+## Block Diagram
+
+---
+
+![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/UnitySidegraph.png)
 
 ## How to modify the avatar
 
