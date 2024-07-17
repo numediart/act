@@ -45,7 +45,7 @@ This project has highly been inspired by an older project we made in Godoot Engi
 > [!WARNING]
 > To use livestream, check the video :
 > 
-> ![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Readme_Vid/Tutorial-LiveStream.gif)
+> ![](https://github.com/numediart/ACT/blob/ACT_experimental/Readme_Vid/Tutorial-LiveStream.gif)
 
 <!-- HOW ? -->
 ## How does it work ?
