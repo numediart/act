@@ -61,6 +61,7 @@ public class LiveStreamingRoom : Room
     {
         this._roomOwner = roomOwner;
         this._roomName = roomName;
+        this._password = password;
         _logger.LogInformation($"Room {this._roomId} created by {this._roomOwner}");
         _logger.LogCritical("LiveStreamingRoom initialized");
         _timestamp = UnixTimeNowMillisec().ToString();
