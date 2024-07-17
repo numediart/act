@@ -235,9 +235,14 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
             recordingButton.onClick.RemoveAllListeners();
             recordingButton.onClick.AddListener(OnStopButtonClicked);
             _previousTime = Time.time;
-            StartCoroutine(StopRecording(10.0f));
+            //StartCoroutine(StopRecording(10.0f));
         }
 
+        /// <summary>
+        /// Function to have fixed record time and automtic end of recording expression
+        /// </summary>
+        /// <param name="time"></param>
+        /// <returns></returns>
         private IEnumerator StopRecording(float time)
         {
             yield return new WaitForSeconds(time);
