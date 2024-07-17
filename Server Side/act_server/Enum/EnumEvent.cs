@@ -63,6 +63,8 @@ public class EnumEvents : Enumeration<EnumEvents>
         LiveStreamingAvatarEyeGaze = new(GetNextValue(), "LiveStreamingAvatarEyeGaze");
 
     public static readonly EnumEvents LiveStreamingAudioData = new(GetNextValue(), "LiveStreamingAudioData");
+    
+    public static readonly EnumEvents LiveStreamingMediaPipeBlendshape = new(GetNextValue(), "LiveStreamingMediaPipeBlendshape");
 
 
     #endregion

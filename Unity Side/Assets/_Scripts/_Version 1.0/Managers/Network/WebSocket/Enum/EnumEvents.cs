@@ -56,6 +56,8 @@ namespace _Scripts._Version_1._0.Managers.Network.WebSocket.Enum
         public static readonly EnumEvents LiveStreamingRoomCreated = new(GetNextValue(), "LiveStreamingRoomCreated");
         public static readonly EnumEvents LivestreamingRoomJoined = new(GetNextValue(), "LivestreamingRoomJoined");
         public static readonly EnumEvents LiveStreamingData = new(GetNextValue(), "LiveStreamingData");
+        
+        public static readonly EnumEvents LiveStreamingMediaPipeBlendshape = new(GetNextValue(), "LiveStreamingMediaPipeBlendshape");
 
         public static readonly EnumEvents LiveStreamingAvatarHeadPose =
             new(GetNextValue(), "LiveStreamingAvatarHeadPose");
