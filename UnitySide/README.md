@@ -23,18 +23,18 @@ In the futur, we want to improve the toolkit's Record and WoZ, with a better sta
 ---
 First, you have to start the ACT Server :
 
-![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/GIF_Start_Serveur.gif)
+![](https://github.com/numediart/ACT/blob/ACT_experimental/UnitySide/README_Img/GIF_Start_Serveur.gif)
 
 After that, you lauch the unity build :
 
-![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/Gif_Unity_Start.gif)
+![](https://github.com/numediart/ACT/blob/ACT_experimental/UnitySide/README_Img/Gif_Unity_Start.gif)
 
 Here you have 4 choice :
 
 - Configuration :
   You can configurate your avatar here :
 
-![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/GIF_Avatar_Configuration.gif)
+![](https://github.com/numediart/ACT/blob/ACT_experimental/UnitySide/README_Img/GIF_Avatar_Configuration.gif)
 
   In the first part, you can change neck and head correction, transition duration and if you want the total expression or not.
   In the second part, you can add, edit and delete your own action. You have to import a CSV with all your action unit.
@@ -42,7 +42,7 @@ Here you have 4 choice :
 
 - Record : Here, you can record your own action previously update on Configuration.
 
-![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/GIF_Avatar_Record.gif)
+![](https://github.com/numediart/ACT/blob/ACT_experimental/UnitySide/README_Img/GIF_Avatar_Record.gif)
 
   You have a control pannel, where all action are register. You can drag and drop an action in the queue to create your own record.
   You can adjust head and neck rotation to have the best possible record.
@@ -50,22 +50,22 @@ Here you have 4 choice :
 
 - Wizard Of Oz : Here, you can create a room and connect to it to use expression record before.
 
-![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/GIF_Avatar_WoZ.gif)
+![](https://github.com/numediart/ACT/blob/ACT_experimental/UnitySide/README_Img/GIF_Avatar_WoZ.gif)
 
   All the expression record are on your left, you can press on it to see the expression in action.
 
   Block Diagram :
 
-  ![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/Communication.png)
+  ![](https://github.com/numediart/ACT/blob/ACT_experimental/UnitySide/README_Img/Communication.png)
 
-  ![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/Avatarmove.png)
+  ![](https://github.com/numediart/ACT/blob/ACT_experimental/UnitySide/README_Img/Avatarmove.png)
 
 
 - LiveStreaming : 
 > [!WARNING] 
 > Before launch live Streaming, you have to start Openface so that server can have the data send by openface to LiveStream your expression.
 
-![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/Lips-Sync%20Demo.gif)
+![](https://github.com/numediart/ACT/blob/ACT_experimental/UnitySide/README_Img/Lips-Sync%20Demo.gif)
 
 You can record your expression in realtime, and you can change the parameter of lips sync like phoneme, your mic or enable diseable your mic.
 
@@ -80,7 +80,7 @@ We take the value of the action unit and we adjust it to work on Unity BlenShape
 
 ---
 
-![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/UnitySidegraph.png)
+![](https://github.com/numediart/ACT/blob/ACT_experimental/UnitySide/README_Img/UnitySidegraph.png)
 
 ## How to modify the avatar
 
@@ -175,10 +175,10 @@ Expressions_tongueVert_min
 ```
 
 - Import your avatar in Unity and add the head, the head joint, the neck joint, the left and the right eye joint in the component _Script. Like you can see bellow :
-![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/Add_Avatar.png)
+![](https://github.com/numediart/ACT/blob/ACT_experimental/UnitySide/README_Img/Add_Avatar.png)
 
 - If you want to use lips sync, you have to add the lips sync component in the avatar. In your avatar prefab, add the component ULipSync BlendShape. In the phoneme part of the component, create a phoneme for each phoneme BlendShape you have in your avatar. You can see an example bellow :
-  ![](https://github.com/Arthur-P0/ACT/blob/ACT_experimental/Unity%20Side/README_Img/phoneme_avatar.png)
+  ![](https://github.com/numediart/ACT/blob/ACT_experimental/UnitySide/README_Img/phoneme_avatar.png)
 
 In the avatar prefab, create empty gameobject and add a audio source component with no audioclip. Add ULipsync component and Ulipsync Microphone to use your mic for the lipsync. If you want to know more about lipsync, you can follow this [link](https://github.com/hecomi/uLipSync?tab=readme-ov-file)
 
