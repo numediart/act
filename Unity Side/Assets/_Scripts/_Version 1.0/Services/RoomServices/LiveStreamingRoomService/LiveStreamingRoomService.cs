@@ -22,21 +22,25 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
         [SerializeField] private Transform rightEyeJoint;
 
         [SerializeField] private Button recordingButton;
-        
+
         private IncomingLiveStreamData _incomingLiveStreamData;
         private IncomingLiveStreamData _previousIncomingLiveStreamData;
 
         private List<IncomingLiveStreamData> _incomingLiveStreamDataList = new List<IncomingLiveStreamData>();
         private List<Pose> _incomingPoseList = new List<Pose>();
-        
+
+
+        private List<BlendShapeList> _incomingMediaPipeBlendshapeDataList = new List<BlendShapeList>();
+        private List<BlendShapeList> _previousIncomingMediaPipeBlendshapeDataList = new List<BlendShapeList>();
+
         Pose _incomingPose;
         Pose _previousIncomingPose;
         Gaze _incomingGaze;
         Gaze _previousIncomingGaze;
-        
+
         private bool _isRecording;
         double _previousTime;
-        
+
         private void Awake()
         {
             LiveStreamingRoomController liveStreamingRoomController = new LiveStreamingRoomController(this);
@@ -44,7 +48,7 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
 
         private void Start()
         {
-            _previousIncomingLiveStreamData = new IncomingLiveStreamData(Array.Empty<AU>(), 0,0);
+            _previousIncomingLiveStreamData = new IncomingLiveStreamData(Array.Empty<AU>(), 0, 0);
             _previousIncomingPose = new Pose();
             _previousIncomingGaze = new Gaze();
         }
@@ -52,18 +56,17 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
         public void OnActionUnitsReceived(IncomingLiveStreamData data)
         {
             _incomingLiveStreamData = data;
-            if(_previousIncomingLiveStreamData._actionUnits.Length == 0)
+            if (_previousIncomingLiveStreamData._actionUnits.Length == 0)
                 _previousIncomingLiveStreamData = data;
-            if(_isRecording)
+            if (_isRecording)
                 _incomingLiveStreamDataList.Add(data);
-            
         }
 
         public void OnHeadPoseReceived(Pose data)
         {
             _incomingPose = data;
             _previousIncomingPose ??= data;
-            if(_isRecording)
+            if (_isRecording)
                 _incomingPoseList.Add(data);
         }
 
@@ -94,15 +97,16 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
                     if (difference < 0.1f)
                     {
                         continue;
-                    };
+                    }
+
+                    ;
 
                     int blendShapeIndex = skinnedMeshRenderer.sharedMesh.GetBlendShapeIndex(currentBlendShape.Key);
                     if (blendShapeIndex != -1)
                     {
                         skinnedMeshRenderer.SetBlendShapeWeight(blendShapeIndex, currentBlendShape.Value * 55f);
                         previousActionUnit.BlendShapeList[actionUnit.BlendShapeList.IndexOf(currentBlendShape)].Value =
-                            currentBlendShape.Value;    
-         
+                            currentBlendShape.Value;
                     }
                     else
                     {
@@ -110,8 +114,6 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
                     }
                 }
             }
-
-         
         }
 
         private void ApplyHeadPoseToAvatar()
@@ -134,34 +136,86 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
             headNeckJoint.localRotation =
                 Quaternion.Euler((vectorRotation * neckMultiplier) + new Vector3(26.705f, 0, 0));
             _previousIncomingPose = _incomingPose;
-            
         }
 
         private void Update()
         {
             if (_incomingLiveStreamData != null)
                 ApplyBlendShapeValueToAvatar();
-            
+
             if (_incomingPose != null)
                 ApplyHeadPoseToAvatar();
-           
+
+            if (_incomingMediaPipeBlendshapeDataList.Count > 0)
+                ApplyMediapipeDataToAvatar();
         }
-        
-            
+
+        public void OnMediaPipeBlendshapeData(List<BlendShapeList> data)
+        {
+            _incomingMediaPipeBlendshapeDataList = data;
+            if (_previousIncomingMediaPipeBlendshapeDataList.Count == 0)
+                _previousIncomingMediaPipeBlendshapeDataList = data;
+        }
+
+        private void ApplyMediapipeDataToAvatar()
+        {
+            if (!liveStreamingDataPrefab.TryGetComponent(out SkinnedMeshRenderer skinnedMeshRenderer))
+            {
+                Debug.LogError("SkinnedMeshRenderer not found on the liveStreamingDataPrefab.");
+                return;
+            }
+
+            Mesh mesh = skinnedMeshRenderer.sharedMesh;
+            Dictionary<string, int> blendShapeIndexCache = new Dictionary<string, int>();
+
+            foreach (var blendShapeData in _incomingMediaPipeBlendshapeDataList)
+            {
+                string blendShapeName = blendShapeData.Key;
+                float newBlendShapeValue = blendShapeData.Value;
+
+                int blendShapeIndex;
+                if (!blendShapeIndexCache.TryGetValue(blendShapeName, out blendShapeIndex))
+                {
+                    blendShapeIndex = mesh.GetBlendShapeIndex(blendShapeName);
+                    blendShapeIndexCache[blendShapeName] = blendShapeIndex;
+                }
+
+                if (blendShapeIndex == -1)
+                {
+                    Debug.LogWarning("Blendshape not found: " + blendShapeName);
+                    continue;
+                }
+
+                int dataIndex = _incomingMediaPipeBlendshapeDataList.IndexOf(blendShapeData);
+                var previousBlendShapeData = _previousIncomingMediaPipeBlendshapeDataList[dataIndex];
+
+                float previousBlendShapeValue = previousBlendShapeData.Value;
+                float difference = Mathf.Abs(previousBlendShapeValue - newBlendShapeValue);
+
+                if (difference >= 0.1f)
+                {
+                    skinnedMeshRenderer.SetBlendShapeWeight(blendShapeIndex, newBlendShapeValue * 55f);
+                    previousBlendShapeData.Value = newBlendShapeValue;
+                }
+            }
+        }
+    
+
+
         public struct RecordData
         {
-            
             public List<IncomingLiveStreamData> incomingLiveStreamData;
             public List<Pose> incomingPose;
             public int TargetFps;
-            
-            public RecordData(List<IncomingLiveStreamData> incomingLiveStreamData, List<Pose> incomingPose, int targetFps = 30)
+
+            public RecordData(List<IncomingLiveStreamData> incomingLiveStreamData, List<Pose> incomingPose,
+                int targetFps = 30)
             {
                 this.incomingLiveStreamData = incomingLiveStreamData;
                 this.incomingPose = incomingPose;
                 TargetFps = targetFps;
             }
-            
+
             public object ToJson()
             {
                 return new
@@ -170,9 +224,8 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
                     incomingPose
                 };
             }
-            
         }
-   
+
         public void OnRecordButtonClicked()
         {
             Debug.Log("Record Button Clicked");
@@ -183,26 +236,26 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
             recordingButton.onClick.AddListener(OnStopButtonClicked);
             _previousTime = Time.time;
             StartCoroutine(StopRecording(10.0f));
-            
         }
 
         private IEnumerator StopRecording(float time)
         {
             yield return new WaitForSeconds(time);
-            if(_isRecording)
+            if (_isRecording)
                 OnStopButtonClicked();
         }
+
         public void OnStopButtonClicked()
         {
             Debug.Log("Stop Button Clicked");
             // stop recording and save the JSON file
             double endTime = Time.time;
             int incomingLiveStreamDataCount = _incomingLiveStreamDataList.Count;
-         
+
             RecordData recordData = new RecordData(_incomingLiveStreamDataList, _incomingPoseList);
             string json = JsonConvert.SerializeObject(recordData.ToJson());
             // open file dialog to choose the path and the name of the file
-          
+
             //start coroutine to save the file
             FileDialog fs = gameObject.AddComponent<FileDialog>();
             string path = fs.SaveFileDialog("Save File", "intensity", "json");
@@ -210,7 +263,6 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
             _isRecording = false;
             recordingButton.onClick.RemoveAllListeners();
             recordingButton.onClick.AddListener(OnRecordButtonClicked);
-     
         }
     }
 }

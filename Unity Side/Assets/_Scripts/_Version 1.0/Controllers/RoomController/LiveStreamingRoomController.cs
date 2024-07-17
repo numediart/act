@@ -1,4 +1,5 @@
-﻿using _Scripts._Version_1._0.Managers.Network.WebSocket;
+﻿using System.Collections.Generic;
+using _Scripts._Version_1._0.Managers.Network.WebSocket;
 using _Scripts._Version_1._0.Managers.Network.WebSocket.Enum;
 using _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService;
 using Newtonsoft.Json;
@@ -27,6 +28,8 @@ namespace _Scripts._Version_1._0.Controllers.RoomController
             EventManager.On(EnumEvents.LiveStreamingRoomCreated.Name, OnRoomCreated);
             EventManager.On(EnumEvents.LiveStreamingData.Name, OnActionUnitsReceived);
             EventManager.On(EnumEvents.LiveStreamingAvatarHeadPose.Name, OnHeadPoseReceived);
+            EventManager.On(EnumEvents.LiveStreamingMediaPipeBlendshape.Name, OnMediaPipeBlendshapeData);
+            
         }
 
         protected override void UnregisterEvents()
@@ -34,6 +37,7 @@ namespace _Scripts._Version_1._0.Controllers.RoomController
             EventManager.Off(EnumEvents.LiveStreamingRoomCreated.Name, OnRoomCreated);
             EventManager.Off(EnumEvents.LiveStreamingData.Name, OnActionUnitsReceived);
             EventManager.Off(EnumEvents.LiveStreamingAvatarHeadPose.Name, OnHeadPoseReceived);
+            EventManager.Off(EnumEvents.LiveStreamingMediaPipeBlendshape.Name, OnMediaPipeBlendshapeData);
         }
 
         protected override void OnRoomCreated(string data)
@@ -63,6 +67,14 @@ namespace _Scripts._Version_1._0.Controllers.RoomController
         {
             var pose = JsonConvert.DeserializeObject<Pose>(data);
             _liveStreamingRoomService.OnHeadPoseReceived(pose);
+        }
+        
+        
+        private void OnMediaPipeBlendshapeData(string data)
+        {
+            var blendShapeData = JsonConvert.DeserializeObject<List<BlendShapeList>>(data);
+            
+            _liveStreamingRoomService.OnMediaPipeBlendshapeData(blendShapeData);
         }
     }
 }

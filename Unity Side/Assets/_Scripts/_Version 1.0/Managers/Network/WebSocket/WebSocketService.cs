@@ -62,7 +62,7 @@ namespace _Scripts._Version_1._0.Managers.Network.WebSocket
                         _clientWebSocket.CloseAsync(WebSocketCloseStatus.EndpointUnavailable, "Closing due to EndPoint unavailable", CancellationToken.None).Wait();
                         return;
                     }
-
+                    
                     // Append the received bytes to the StringBuilder
                     stringBuilder.Append(Encoding.UTF8.GetString(buffer.Array ?? Array.Empty<byte>(), 0, result.Count));
 

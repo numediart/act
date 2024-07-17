@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using act_server.Enum;
 using act_server.Room;
 using act_server.Service.RoomService;
@@ -246,7 +247,7 @@ public sealed class LiveStreamingRoomController
     public class MediaPipeBlendshapeData
     {
         public string RoomId;
-        public ActionUnit[] _actionUnit;
+        public List<BlendShapeData> BlendShapeList ;
     }
     
     private void OnMediaPipeBlendshapeData(string data, string clientId)
@@ -257,13 +258,15 @@ public sealed class LiveStreamingRoomController
         {
             PLogger.LogInformation("Received mediapipe blendshape data" + data);
             MediaPipeBlendshapeData blendshapeData = JsonConvert.DeserializeObject<MediaPipeBlendshapeData>(data);
-            if (blendshapeData.Equals(null))
+            PLogger.LogInformation("Received mediapipe blendshape data" + blendshapeData.BlendShapeList);
+            
+            if (blendshapeData == null)
             {
                 PLogger.LogError("Blendshape data is null.");
                 return;
             }
 
-            PRoomService.OnMediaPipeBlendshapeData(blendshapeData.RoomId, clientId, blendshapeData._actionUnit);
+            PRoomService.OnMediaPipeBlendshapeData(blendshapeData.RoomId, clientId, blendshapeData.BlendShapeList);
         }
         catch (Exception ex)
         {

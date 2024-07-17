@@ -203,12 +203,12 @@ public class LiveStreamingRoomService(ILogger<LiveStreamingRoom> logger, MainWeb
         }
     }
     
-    public void OnMediaPipeBlendshapeData(string roomId, string clientId, ActionUnit[] data)
+    public void OnMediaPipeBlendshapeData(string roomId, string clientId, List<BlendShapeData> data)
     {
         if (Rooms.TryGetValue(roomId, out LiveStreamingRoom room))
         {
             
-            room.BroadcastToRoom(new WebsocketMessage(EnumEvents.LiveStreamingData.Name, data.ToString()).ToJson());
+            room.BroadcastToRoom(new WebsocketMessage(EnumEvents.LiveStreamingMediaPipeBlendshape.Name, data).ToJson());
         }
         else
         {
