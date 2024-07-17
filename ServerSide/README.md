@@ -232,13 +232,6 @@ abstract methods.
         }
       }
 ```
-## TODO 
-___
-
-1. Add a way to handle the disconnection of the client
-2. Add a way to handle the reconnection of the client
-3. Find a way to transmit roomId to openface or any other facial recognition software to get user expression using websocket
-4. Add Error Handling and Error Event
 
 ##  How to contribute 
 ___
