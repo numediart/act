@@ -73,6 +73,8 @@ If you want to contribute to the project, please follow the steps below :
 
 <!-- TODO -->
 ## To Do
+* Create a online server
+* Debug Record (the record skip the second expression, create an ui to put the path of the record video, add record to the server)
 * Improving mediapipe
 * Improve server connection reliability
 * Improve the current avatar add blendshapes
@@ -82,6 +84,10 @@ If you want to contribute to the project, please follow the steps below :
 * Make mediapipe and openface connections more reliable
 * Server unit test
 * Optimise data formatting
+* Add a way to handle the disconnection of the client
+* Add a way to handle the reconnection of the client
+* Find a way to transmit roomId to openface or any other facial recognition software to get user expression using websocket
+* Add Error Handling and Error Event
 
 <!-- LICENSE -->
 ## License
