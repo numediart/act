@@ -4,10 +4,13 @@
 ## How to use
 ___
 1. Clone the whole repository (unity side and server side)
-2. Open the unity project in Unity3D
-3. Open the server side in your favorite IDE (I used Rider)
-4. Run the server side
-5. For the unity side, please refer to the README.md in the unity side folder
+2. install [Unity hub](https://public-cdn.cloud.unity3d.com/hub/prod/UnityHubSetup.exe) and download unity v2022.3.9f1
+3. Open the unity project in Unity3D
+4. Open the server side in your favorite IDE (I used Rider)
+5. Run the server side
+6. For the unity side, please refer to the README.md in the unity side folder
+> [!WARNING]
+> Make sure you have C# toolchain installed
 
 ## How it works
 ___
@@ -22,6 +25,10 @@ services, each controller and services and rooms inherit from a base abstract cl
 The server and client use a room system to handle multiple clients. Each client is assigned to a room and can only send
 information to the clients in the same room. The client must send a request event for any action it wants to do. The
 server will then dispatch the event to the right controller and the controller will handle the event.
+
+## Block Diagram
+
+![](https://github.com/numediart/ACT/blob/ACT_experimental/ServerSide/assets/Block_diagram.png)
 
 ## How to add new events
 ___
@@ -221,17 +228,10 @@ abstract methods.
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            await Task.CompletedTask;
         }
       }
 ```
-## TODO 
-___
-
-1. Add a way to handle the disconnection of the client
-2. Add a way to handle the reconnection of the client
-3. Investigate the issue when send admin message to the client in WoZRoom 
-4. Get Rooms info livestreaming fix issue
-5. Find a way to transmit roomId to openface or any other face recognition software to get the emotion of the user using websocket
 
 ##  How to contribute 
 ___
