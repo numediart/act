@@ -3,7 +3,7 @@
 <div align="center">
   <p align="center">
     The Avatar Controller Toolkit (ACT) is a tool developped to enhance the visualisation of any expression model which would be performed by an agent, Lou, we have created using Blender.
-    The ACT project uses the power of Unity and Blender, mixed in a tool made for the users. The advantage of our project is you have no constraints for the choice of model you want to use. You can plug your own model on the server and use the avatar.
+    The ACT project uses the power of Unity and Blender, mixed in a tool made for the users. The project have three utilisation : Live streaming, Record and Wizard of Oz The advantage of our project is you have no constraints for the choice of model you want to use. You can plug your own model on the server and use the avatar.
     <br />
     <br />
     <a href="https://github.com/numediart/ACT/wiki">View Wiki</a>
