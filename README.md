@@ -56,7 +56,7 @@ This project is inspired by an older project developed in the Godot Engine, whic
 
 ### Live Streaming
 
-Currently, the live streaming feature supports two models, [OpenFace](https://github.com/numediart/openface_act) and [Mediapipe](https://https://github.com/numediart/mediapipe_act). Openface captures action units using the webcam, formats them into JSON, and sends them to the server. The server converts these units into blendshapes readable by Unity to animate the avatar.
+Currently, the live streaming feature supports two models, [OpenFace](https://github.com/numediart/openface_act) and [Mediapipe](https://github.com/numediart/mediapipe_act). Openface captures action units using the webcam, formats them into JSON, and sends them to the server. The server converts these units into blendshapes readable by Unity to animate the avatar.
 Mediapipe captures the face landmarks using the webcam, formats them into JSON, and sends formatted blendshapes to the server. The server then sends these blendshapes to Unity to animate the avatar.
 ### Record
 
