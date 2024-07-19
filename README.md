@@ -2,8 +2,8 @@
 
 <div align="center">
   <p align="center">
-    The Avatar Controller Toolkit (ACT) is a tool developped to enhance the visualisation of any expression model which would be performed by an agent, Lou, we have created using Blender.
-    The ACT project uses the power of Unity and Blender, mixed in a tool made for the users. The project have three features : <b>Live streaming</b>, <b>Record</b> and <b>Wizard of Oz</b>. The advantage of our project is you have no constraints for the choice of model you want to use. You can plug your own model on the server and use the avatar.
+    The Avatar Controller Toolkit (ACT) is developed to enhance the visualization of any expression model performed by an agent, Lou, created using Blender.
+    ACT leverages the power of Unity and Blender, offering three key features: <b>Live Streaming</b>, <b>Recording</b>, and <b>Wizard of Oz</b>. The primary advantage of our project is its flexibility; you can use any model with the server to animate the avatar.
     <br />
     <br />
     <a href="https://github.com/numediart/ACT/wiki">View Wiki</a>
@@ -12,97 +12,129 @@
   </p>
 </div>
 
-<!-- ABOUT THE PROJECT -->
 ## About The Project
 
-Here's a preview of what you will find in that repository. To make it simple, we wanted to create an avatar in a virtual environment that will be able to replay expressions form yourself or your AI Model.
+This repository aims to create an avatar in a virtual environment capable of replaying expressions from either yourself or your AI model. We have developed a video exporter that allows users to create a sequence of expressions for the avatar and export it as an MP4 file.
 
-In doing so, we ended creating a video exporter, where you can create a sequence of expression you want the avatar to perform and export it as a MP4 file.
+Additionally, we have implemented a Wizard of Oz experiment interface, facilitating the execution of such experiments using a server and a project build. For those unfamiliar with Wizard of Oz experiments, more information can be found [here](https://en.wikipedia.org/wiki/Wizard_of_Oz_experiment).
 
-We have also implemented Wizard of Oz experiment interface that allows you to perform wizard of oz experiment easely, using a server and a build of the project. If you are not familiar with wizard of oz experiments, please follow this [link](https://en.wikipedia.org/wiki/Wizard_of_Oz_experiment).
+Lastly, the live streaming feature enables real-time control of the avatar using models such as OpenFace with a webcam, transmitting head, mouth, and other movements to the avatar live.
 
-Finally, we have implemented live streaming experiment, where you can use your model (here openface) with your webcam and have the movements of the head, mouth, etc. transmitted live to the avatar.
+Future improvements aim to enhance the toolkit's modularity, allowing users to add their own avatars, utilize various expression types beyond .csv, and meet the scientific community's needs.
 
-In the future, we want to improve the toolkit's modularity, where you will be able to add your own avatar, use different types of expression, not only .csv, and respond to the need of the scientific community.
-
-This project has highly been inspired by an older project we made in Godoot Engine, find the link [here](https://github.com/numediart/ReVA-toolkit).
+This project is inspired by an older project developed in the Godot Engine, which can be found [here](https://github.com/numediart/ReVA-toolkit).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- GETTING STARTED -->
 ## Getting Started
 
-1. Download the project
-2. In the folder "Server Side", open the solution "act_server.sln"
-3. Start the solution
-4. Open the folder "Unity Side" on Unity
-5. Go to the scene "Ver 1.0 - Menu", in the folder "Scene"
-6. Launch the unity project, Here you have Four Choice :
-   - Configuration : You can configurate the setting of record and add csv file with your expression
-   - Record : Here you can create a video of a sequence of expression you have made
-   - Wizard Of Oz : In this part, You create a room to control the avatar with expression you made
-   - Live Stream : With openface or your model, you can control avatar, use lipsync and record our expression
+1. Download the project.
+2. In the "Server Side" folder, open the solution "act_server.sln".
+3. Start the solution.
+4. Open the "Unity Side" folder in Unity.
+5. Navigate to the "Ver 1.0 - Menu" scene in the "Scene" folder.
+6. Launch the Unity project. You will have four options:
+   - **Configuration:** Configure the recording settings and add .csv or .json files with your expressions.
+   - **Record:** Create a video of a sequence of expressions.
+   - **Wizard of Oz:** Create a room to control the avatar with predefined expressions.
+   - **Live Stream:** Use OpenFace or your model to control an avatar, utilizing lip sync and recording your expressions.
+     
+
+
 > [!WARNING]
 > To use livestream, check the video :
 > 
 > ![](https://github.com/numediart/ACT/blob/ACT_experimental/Readme_Vid/Tutorial-LiveStream.gif)
+> 
+>  Begin by starting the server. The server will handle the reception and distribution of blendshape data.
+> 
+>  Open the Unity client and create a livestream room.
+> 
+> In the server console, note the room ID. When prompted by the Mediapipe script or in config.xml for Openface, enter this room ID to establish the connection.
 
-<!-- HOW ? -->
-## How does it work ?
+## How Does It Work?
 
-For LiveStreaming : Actually, it's support one model [Openface](https://github.com/numediart/openface_act) .We use it to get action unit. We formatted action unit into json and sent to the server. The server transform it to blendshape which can be read by Unity to move the avatar.
+### Live Streaming
 
-For Record : Add your expression in .csv or .json in the configuration menu. Unity read the file and process it to the avatar to create a record of your different expression
+Currently, the live streaming feature supports two models, [OpenFace](https://github.com/numediart/openface_act) and [Mediapipe](https://https://github.com/numediart/mediapipe_act.git). Openface captures action units using the webcam, formats them into JSON, and sends them to the server. The server converts these units into blendshapes readable by Unity to animate the avatar.
+Mediapipe captures the face landmarks using the webcam, formats them into JSON, and sends formatted blendshapes to the server. The server then sends these blendshapes to Unity to animate the avatar.
+### Record
 
-For Wizard of Oz : You have one agent, who is the admin, and a client. The agent send expression to the client through the server.
+Add your expressions in .csv or .json format in the configuration menu. Unity reads the file and processes it to create a record of your various expressions.
 
-<!-- CONTRIBUTING -->
+### Wizard of Oz
+
+In this mode, an agent (admin) sends expressions to a client through the server, allowing for controlled experiments.
+
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contributions are what make the open-source community such a great place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-If you want to contribute to the project, please follow the steps below :
+To contribute to the project, follow these steps:
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+1. Fork the Project.
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the Branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- TODO -->
 ## To Do
-* Create a online server
-* Debug Record (the record skip the second expression, create an ui to put the path of the record video, add record to the server)
-* Improving mediapipe
-* Improve server connection reliability
-* Improve the current avatar add blendshapes
-* Debugging the Wizard of Oz and the Record (lag on the avatar)
-* Plugin system for modding/adding features
-* Add error handling on the client and server
-* Make mediapipe and openface connections more reliable
-* Server unit test
-* Optimise data formatting
-* Add a way to handle the disconnection of the client
-* Add a way to handle the reconnection of the client
-* Find a way to transmit roomId to openface or any other facial recognition software to get user expression using websocket
-* Add Error Handling and Error Event
 
-<!-- LICENSE -->
+* Create an online server.
+* Debug recording (skip the second expression, create a UI for the record video path, add recording to the server).
+* Improve Mediapipe integration.
+* Enhance server connection reliability.
+* Improve the current avatar and add blendshapes.
+* Debug Wizard of Oz and Record features (reduce lag).
+* Develop a plugin system for modding/adding features.
+* Add error handling on the client and server.
+* Ensure reliable connections for Mediapipe and OpenFace.
+* Implement server unit tests.
+* Optimize data formatting.
+* Handle client disconnections.
+* Manage client reconnections.
+* Transmit room ID to OpenFace or other facial recognition software using WebSockets.
+* Add error handling and error events.
+¨
+## Bugs
+### Livestream:
+
+- Connection with the server may randomly disconnect.
+- OpenFace or Mediapipe can lose connection with the server.
+- Review the multipliers for blendshapes to ensure they appear more realistic.
+- The lipsync settings do not cover the entire game view when opened.
+- There are occasional latency issues between the server and the livestream, causing the avatar to lag by a few seconds (potentially due to data queuing?).
+
+### Wizard of Oz:
+
+- Connection with the server may randomly disconnect (both client and admin).
+- JSON format is not supported.
+- Certain expressions are skipped (notably the second one).
+
+### Record:
+
+- Video recording functionality is unreliable; the click sometimes does not work.
+- Certain expressions are skipped (notably the second one).
+- (Feature request) Prompt for the video save path at the start or end of the recording.
+
+
+
 ## License
 
 See `LICENSE` for more information.
 
-<!-- CONTACT -->
 ## Contact
 
 - Kevin El Haddad - PI
-- [Armand DEFFRENNES](https://github.com/JambonPasFrais) - armand.deffrennes@student.junia.com - ACT Dev
-- [Pierre-Luc MILLET](https://github.com/Pierre-LucM)- pierre-luc.millet@student.junia.com - ACT Dev
-- [Arthur PINEAU](https://github.com/Arthur-P0) - arthur.pineau@student.junia.com - ACT Dev
-
+- [Armand DEFFRENNES](https://github.com/JambonPasFrais) - armand.deffrennes@student.junia.com - ACT Developer
+- [Pierre-Luc MILLET](https://github.com/Pierre-LucM) - pierre-luc.millet@student.junia.com - ACT Developer
+- [Arthur PINEAU](https://github.com/Arthur-P0) - arthur.pineau@student.junia.com - ACT Developer
 
 Project Link: [Git Repo](https://github.com/numediart/ACT)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+---
+
