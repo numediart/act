@@ -30,6 +30,21 @@ server will then dispatch the event to the right controller and the controller w
 
 ![](https://github.com/numediart/ACT/blob/ACT_experimental/ServerSide/assets/Block_diagram.png)
 
+## How to format events
+___
+The event should be formatted like this :
+
+```json
+{
+  "EventName": "YourEventName",
+  "Data": {"YourData": "YourValue"}
+}
+```
+`EventName` has to be known by the server otherwise it will throw an error.
+
+The `Data` has to be a valid JSON object and can be empty. 
+
+
 ## How to add new events
 ___
 1. Create a new event in the [EnumEvent.cs](act_server/Enum/EnumEvent.cs) file
@@ -244,7 +259,7 @@ ___
 
 ## Contact 
 ___
-- Kevin El Haddad - ACT Creator
+- Kevin El Haddad - PI
 - [Pierre-Luc MILLET](https://github.com/Pierre-LucM)- pierre-luc.millet@student.junia.com - ACT Dev
 - [Arthur PINEAU](https://github.com/Arthur-P0) - arthur.pineau@student.junia.com - ACT Dev
 - [Armand DEFFRENNES](https://github.com/JambonPasFrais) - armand.deffrennes@student.junia.com - ACT Dev
