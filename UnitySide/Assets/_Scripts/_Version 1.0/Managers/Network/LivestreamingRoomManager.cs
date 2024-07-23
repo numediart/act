@@ -20,6 +20,9 @@ public class LivestreamingRoomManager : AbstractRoomSelection<List<Livestreaming
     [SerializeField] private TMP_InputField _roomNameInputField;
     [SerializeField] private TMP_InputField _roomPasswordInputField;
     [SerializeField] private TMP_InputField _roomConfPasswordInputField;
+    
+    [SerializeField] private GameObject RoomCreationMenu;
+    [SerializeField] private GameObject RoomSelectionMenu;
 
     [Header("Parameters")] [SerializeField]
     private KeyCode _keyToToggleRoomCreationMenu;
@@ -161,6 +164,18 @@ public class LivestreamingRoomManager : AbstractRoomSelection<List<Livestreaming
     public override List<LivestreamingRoom> GetRooms()
     {
         return _rooms;
+    }
+    
+    public void display()
+    {
+        RoomCreationMenu.SetActive(!RoomCreationMenu.activeSelf);
+        RoomSelectionMenu.SetActive(!RoomSelectionMenu.activeSelf);
+    }
+    
+    public void hide()
+    {
+        RoomCreationMenu.SetActive(!RoomCreationMenu.activeSelf);
+        RoomSelectionMenu.SetActive(!RoomSelectionMenu.activeSelf);
     }
 }
 }
