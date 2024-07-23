@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using _Scripts._Version_1._0.Controllers.RoomController;
 using _Scripts._Version_1._0.Utils;
 using Newtonsoft.Json;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
@@ -43,12 +44,17 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
         
         private AudioSource audioSource;
 
+        [SerializeField] private TextMeshProUGUI RoomID;
+
         private void Awake()
         {
             LiveStreamingRoomController liveStreamingRoomController = new LiveStreamingRoomController(this);
             audioSource = GameObject.Find("LipSync").GetComponent<AudioSource>();
             // audio source has to be attached to lip sync 
             
+            RoomID.text = NetworkManager.Instance.TryGetComponent<LivestreamingRoom>(out var room)
+                ? room.RoomId
+                : "Room ID not found";
         }
 
         private void Start()
@@ -306,6 +312,12 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
             _isRecording = false;
             recordingButton.onClick.RemoveAllListeners();
             recordingButton.onClick.AddListener(OnRecordButtonClicked);
+        }
+
+        public void copyinclipboard()
+        {
+            Debug.LogWarning("Room ID: " + RoomID.text);
+            GUIUtility.systemCopyBuffer = RoomID.text;
         }
     }
 }
