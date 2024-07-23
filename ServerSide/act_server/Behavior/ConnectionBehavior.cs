@@ -35,7 +35,6 @@ public class ConnectionBehavior : WebSocketBehavior
     {
         base.OnMessage(e);
         WebsocketMessage message = Newtonsoft.Json.JsonConvert.DeserializeObject<WebsocketMessage>(e.Data)!;
-        Console.WriteLine(message.EventName);
         _eventManagerService.Emit(EnumEvents.FromName(message.EventName).Name, message.Data ?? null, base.ID);
     }
 

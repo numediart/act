@@ -223,6 +223,7 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
             public byte[] buffer;
             public int bytesRecorded;
             public string roomId;
+            public int sampleRate;
         }
 
         
@@ -231,7 +232,7 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
             AudioIncomingData audioIncomingData = JsonConvert.DeserializeObject<AudioIncomingData>(data);
             byte[] buffer = audioIncomingData.buffer;
             int bytesRecorded = audioIncomingData.bytesRecorded;
-            AudioClip receivedClip = AudioClip.Create("ReceivedAudio", bytesRecorded / 2, 1, 48000, false);
+            AudioClip receivedClip = AudioClip.Create("ReceivedAudio", bytesRecorded / 2, 1, audioIncomingData.sampleRate , false);
             receivedClip.SetData(ConvertByteToFloat(buffer), 0);
 
             // Play the received AudioClip
