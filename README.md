@@ -99,6 +99,7 @@ To contribute to the project, follow these steps:
 * Manage client reconnections.
 * Transmit room ID to OpenFace or other facial recognition software using WebSockets.
 * Add error handling and error events.
+* Refacto Unity Side architecture for a MVC (Model View Controller) architecture
 ¨
 ## Bugs
 ### Livestream:
