@@ -6,8 +6,10 @@
     ACT leverages the power of Unity and Blender, offering three key features: <b>Live Streaming</b>, <b>Recording</b>, and <b>Wizard of Oz</b>. The primary advantage of our project is its flexibility; you can use any model with the server to animate the avatar.
     <br />
     <br />
-    <a href="https://github.com/numediart/ACT/wiki">View Wiki</a>
+    <a href="https://github.com/numediart/ACT/tree/ACT_experimental/UnitySide">View Unity Side Readme</a>
     ·
+    <a href="https://github.com/numediart/ACT/tree/ACT_experimental/ServerSide">View Server Side Readme</a>
+    .
     <a href="https://github.com/numediart/ACT/issues">Report Bug</a>
   </p>
 </div>
