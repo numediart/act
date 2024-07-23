@@ -149,6 +149,12 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
             _previousIncomingPose = _incomingPose;
         }
 
+        private void FixedUpdate()
+        {
+            if (audioSource.clip != null && !audioSource.isPlaying)
+                audioSource.Play();
+        }
+
         private void Update()
         {
             if (_incomingLiveStreamData != null)
