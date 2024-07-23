@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.3069224, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -205,8 +205,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 727687028}
   m_HandleRect: {fileID: 727687027}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 1
+  m_Value: 1
+  m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1493,10 +1493,11 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1381596349}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 1763740374}
+        m_TargetAssemblyTypeName: _Scripts._Version_1._0.Managers.Network.LivestreamingRoomManager,
+          Assembly-CSharp
+        m_MethodName: display
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2066,9 +2067,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: RoomManager, Assembly-CSharp
-        m_MethodName: ToggleRoomCreationMenu
+      - m_Target: {fileID: 1763740374}
+        m_TargetAssemblyTypeName: _Scripts._Version_1._0.Managers.Network.LivestreamingRoomManager,
+          Assembly-CSharp
+        m_MethodName: hide
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2283,6 +2285,8 @@ MonoBehaviour:
   _roomNameInputField: {fileID: 8507644887676720742}
   _roomPasswordInputField: {fileID: 271085859}
   _roomConfPasswordInputField: {fileID: 1952311715}
+  RoomCreationMenu: {fileID: 1381596349}
+  RoomSelectionMenu: {fileID: 2053891913}
   _keyToToggleRoomCreationMenu: 27
 --- !u!1 &1865337998
 GameObject:
@@ -2897,7 +2901,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1662422041}
   m_Direction: 0
   m_Value: 1
-  m_Size: 1
+  m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
