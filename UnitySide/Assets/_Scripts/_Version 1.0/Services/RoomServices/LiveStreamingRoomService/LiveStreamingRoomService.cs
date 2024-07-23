@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -141,6 +141,12 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
             headNeckJoint.localRotation =
                 Quaternion.Euler((vectorRotation * neckMultiplier) + new Vector3(26.705f, 0, 0));
             _previousIncomingPose = _incomingPose;
+        }
+
+        private void FixedUpdate()
+        {
+            if (audioSource.clip != null && !audioSource.isPlaying)
+                audioSource.Play();
         }
 
         private void Update()

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using act_server.Enum;
 using act_server.Room;
@@ -240,7 +240,7 @@ public sealed class LiveStreamingRoomController
                 return;
             }
 
-            PRoomService.OnAudioData(audioData.roomId, clientId, data);
+            PRoomService.OnAudioData(audioData.roomId, clientId, audioData);
         }
         catch (Exception ex)
         {

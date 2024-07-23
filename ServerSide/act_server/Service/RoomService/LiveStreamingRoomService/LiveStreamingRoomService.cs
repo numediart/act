@@ -190,12 +190,12 @@ public class LiveStreamingRoomService(ILogger<LiveStreamingRoom> logger, MainWeb
         }
     }
     
-    public void OnAudioData(string roomId, string clientId,string audioData)
+    public void OnAudioData(string roomId, string clientId,LiveStreamingRoom.AudioData audioData)
     {
         if (Rooms.TryGetValue(roomId, out LiveStreamingRoom room))
         {
             
-            room.BroadcastToRoom(audioData);
+            room.BroadcastToRoom(new WebsocketMessage(EnumEvents.LiveStreamingAudioData.Name, audioData).ToJson());
         }
         else
         {
