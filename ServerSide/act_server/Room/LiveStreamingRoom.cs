@@ -40,6 +40,7 @@ public class LiveStreamingRoom : Room
         public byte[] buffer;
         public int bytesRecorded;
         public string roomId;
+        public int sampleRate;
     }
 
     public bool VerifyPassword(string password)
