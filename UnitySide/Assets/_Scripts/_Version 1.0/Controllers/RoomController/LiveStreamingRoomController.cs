@@ -29,6 +29,7 @@ namespace _Scripts._Version_1._0.Controllers.RoomController
             EventManager.On(EnumEvents.LiveStreamingData.Name, OnActionUnitsReceived);
             EventManager.On(EnumEvents.LiveStreamingAvatarHeadPose.Name, OnHeadPoseReceived);
             EventManager.On(EnumEvents.LiveStreamingMediaPipeBlendshape.Name, OnMediaPipeBlendshapeData);
+            EventManager.On(EnumEvents.LiveStreamingAudioData.Name, OnAudioDataReceived);
             
         }
 
@@ -75,6 +76,10 @@ namespace _Scripts._Version_1._0.Controllers.RoomController
             var blendShapeData = JsonConvert.DeserializeObject<List<BlendShapeList>>(data);
             
             _liveStreamingRoomService.OnMediaPipeBlendshapeData(blendShapeData);
+        }
+        private void OnAudioDataReceived(string data)
+        {
+            _liveStreamingRoomService.OnLiveStreamingAudioData(data);
         }
     }
 }

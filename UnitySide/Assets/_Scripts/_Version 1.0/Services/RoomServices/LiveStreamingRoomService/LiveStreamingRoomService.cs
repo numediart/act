@@ -40,10 +40,15 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
 
         private bool _isRecording;
         double _previousTime;
+        
+        private AudioSource audioSource;
 
         private void Awake()
         {
             LiveStreamingRoomController liveStreamingRoomController = new LiveStreamingRoomController(this);
+            audioSource = GameObject.Find("LipSync").GetComponent<AudioSource>();
+            // audio source has to be attached to lip sync 
+            
         }
 
         private void Start()
@@ -198,6 +203,39 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
                     previousBlendShapeData.Value = newBlendShapeValue;
                 }
             }
+        }
+        
+        struct AudioIncomingData
+        {
+            public long timestamp;
+            public byte[] buffer;
+            public int bytesRecorded;
+            public string roomId;
+        }
+
+        
+        public void OnLiveStreamingAudioData(string data)
+        {
+            AudioIncomingData audioIncomingData = JsonConvert.DeserializeObject<AudioIncomingData>(data);
+            byte[] buffer = audioIncomingData.buffer;
+            int bytesRecorded = audioIncomingData.bytesRecorded;
+            AudioClip receivedClip = AudioClip.Create("ReceivedAudio", bytesRecorded / 2, 1, 48000, false);
+            receivedClip.SetData(ConvertByteToFloat(buffer), 0);
+
+            // Play the received AudioClip
+            audioSource.clip = receivedClip;
+        }
+        // Convert byte array to float array (assuming 16-bit PCM audio)
+        private float[] ConvertByteToFloat(byte[] byteArray)
+        {
+            int floatArrayLength = byteArray.Length / 2;
+            float[] floatArray = new float[floatArrayLength];
+            for (int i = 0; i < floatArrayLength; i++)
+            {
+                floatArray[i] = BitConverter.ToInt16(byteArray, i * 2) / 32768f; // convert 16-bit PCM to float
+            }
+
+            return floatArray;
         }
     
 
