@@ -1,4 +1,4 @@
-vs# Avatar Controller Toolkit
+# Avatar Controller Toolkit
 
 <div align="center">
   <p align="center">
