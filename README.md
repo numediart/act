@@ -1,4 +1,4 @@
-# Avatar Controller Toolkit
+vs# Avatar Controller Toolkit
 
 <div align="center">
   <p align="center">
@@ -86,21 +86,21 @@ To contribute to the project, follow these steps:
 
 * Create an online server.
 * Debug recording (skip the second expression, create a UI for the record video path, add recording to the server).
-* Improve Mediapipe integration.
+* Improve Mediapipe integration.(mediapipe implementation for act may need improvement, especially the blendshape formatting part)
 * Enhance server connection reliability.
 * Improve the current avatar and add blendshapes.
 * Debug Wizard of Oz and Record features (reduce lag).
-* Develop a plugin system for modding/adding features.
 * Add error handling on the client and server.
 * Ensure reliable connections for Mediapipe and OpenFace.
 * Implement server unit tests.
 * Optimize data formatting.
-* Handle client disconnections.
+* Handle client disconnections. (the current version can't handle self disconnection)
 * Manage client reconnections.
 * Transmit room ID to OpenFace or other facial recognition software using WebSockets.
 * Add error handling and error events.
-* Refacto Unity Side architecture for a MVC (Model View Controller) architecture
-¨
+* Refacto Unity Side architecture for a MVC (Model View Controller) architecture (implement a Factory pattern builder to create new room)
+* Interrupt system for Wizard of Oz (interrupt the current expression to play a new one)
+
 ## Bugs
 ### Livestream:
 
@@ -113,7 +113,7 @@ To contribute to the project, follow these steps:
 ### Wizard of Oz:
 
 - Connection with the server may randomly disconnect (both client and admin).
-- JSON format is not supported.
+- JSON format is not supported. Please use CSV file instead
 - Certain expressions are skipped (notably the second one).
 
 ### Record:
@@ -121,8 +121,6 @@ To contribute to the project, follow these steps:
 - Video recording functionality is unreliable; the click sometimes does not work.
 - Certain expressions are skipped (notably the second one).
 - (Feature request) Prompt for the video save path at the start or end of the recording.
-
-
 
 ## License
 
