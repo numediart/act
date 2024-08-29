@@ -44,6 +44,10 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
         
         private AudioSource audioSource;
 
+
+        private bool check;
+        private float wait;
+
         [SerializeField] private TextMeshProUGUI RoomID;
 
         private void Awake()
@@ -152,7 +156,28 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
         private void FixedUpdate()
         {
             if (audioSource.clip != null && !audioSource.isPlaying)
-                audioSource.Play();
+            {
+                //audioSource.Play();
+                if (wait == 0f && check == false)
+                {
+                    audioSource.Play();
+                    wait = audioSource.clip.length;
+                    check = true;
+                }
+            }
+
+            if (check)
+            {
+                wait = wait - Time.deltaTime;
+            }
+
+            if (check && wait <= 0f)
+            {
+                wait = 0f;
+                check = false;
+                audioSource.clip = null;
+            }
+                
         }
 
         private void Update()
@@ -230,10 +255,18 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
         public void OnLiveStreamingAudioData(string data)
         {
             AudioIncomingData audioIncomingData = JsonConvert.DeserializeObject<AudioIncomingData>(data);
+            //Debug.Log(audioIncomingData);
             byte[] buffer = audioIncomingData.buffer;
+            //Debug.Log(buffer.Length);
+            //Debug.Log(audioIncomingData.bytesRecorded);
+            //Debug.Log(audioIncomingData.sampleRate);
             int bytesRecorded = audioIncomingData.bytesRecorded;
-            AudioClip receivedClip = AudioClip.Create("ReceivedAudio", bytesRecorded / 2, 1, audioIncomingData.sampleRate , false);
+            AudioClip receivedClip = AudioClip.Create("ReceivedAudio", bytesRecorded / 2, 1, audioIncomingData.sampleRate, false);
+            //AudioClip receivedClip = AudioClip.Create("ReceivedAudio", bytesRecorded*2, 1, audioIncomingData.sampleRate, false);
+
             receivedClip.SetData(ConvertByteToFloat(buffer), 0);
+            Debug.Log("SAMPLE");
+            Debug.Log(ConvertByteToFloat(buffer));
 
             // Play the received AudioClip
             audioSource.clip = receivedClip;
@@ -247,7 +280,7 @@ namespace _Scripts._Version_1._0.Services.RoomServices.LiveStreamingRoomService
             {
                 floatArray[i] = BitConverter.ToInt16(byteArray, i * 2) / 32768f; // convert 16-bit PCM to float
             }
-
+            Debug.Log(floatArray);
             return floatArray;
         }
     
