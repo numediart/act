@@ -10,248 +10,252 @@ using act_server.Room;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace act_server.Service.RoomService.WoZRoomService;
-
-public struct AvatarHeadMoveData
+namespace act_server.Service.RoomService.WoZRoomService
 {
-    public double x;
-    public double y;
-    public double z;
-}
 
-public struct AvatarBlendshapeMoveData
-{
-    public Dictionary<string, double> BlendshapeDict;
-}
-
-public struct AvatarBlendshapeTransitionData
-{
-    public Dictionary<string, double> BlendshapeDict;
-    public string Value;
-    public float Duration;
-
-    public AvatarBlendshapeTransitionData(Dictionary<string, double> blendshapeDict, string value, float duration)
+    public struct AvatarHeadMoveData
     {
-        BlendshapeDict = blendshapeDict;
-        Value = value;
-        Duration = duration;
+        public double x;
+        public double y;
+        public double z;
     }
-}
 
-public struct AvatarPoseTransitionData
-{
-    public double x;
-    public double y;
-    public double z;
-    public string Duration;
-}
-
-/// <summary>
-/// Class to control the WoZRoom, and process WoZRoom events
-/// </summary>
-public class WoZRoomService(ILogger<WoZRoom> logger, MainWebSocketService.MainWebSocketService mainWebSocketService)
-    : AbstractRoomService<WoZRoom>(logger)
-{
-    protected override ILogger<WoZRoom> Logger { get; set; } = logger;
-    protected sealed override Dictionary<string, WoZRoom> Rooms { get; set; } = new Dictionary<string, WoZRoom>();
-
-    public override void OnRequestRoomCreate(RoomCreationData roomCreationData)
+    public struct AvatarBlendshapeMoveData
     {
-        try
+        public Dictionary<string, double> BlendshapeDict;
+    }
+
+    public struct AvatarBlendshapeTransitionData
+    {
+        public Dictionary<string, double> BlendshapeDict;
+        public string Value;
+        public float Duration;
+
+        public AvatarBlendshapeTransitionData(Dictionary<string, double> blendshapeDict, string value, float duration)
         {
-            WoZRoom room = new WoZRoom(Logger);
-            Logger.LogInformation("Creating room with id: " + room.RoomId + " and owner: " +
-                                  roomCreationData.RoomOwner +
-                                  " and name: " + roomCreationData.RoomName + " and password: " +
-                                  roomCreationData.Password);
-            room.InitRoom(roomCreationData.RoomOwner!, roomCreationData.RoomName, roomCreationData.Password);
-            RoomInfo roomInfo = new RoomInfo(room.RoomName, room.RoomOwner, room.RoomId.ToString(), room.HasPassword(),
-                room.Clients.Count);
-            room.AddClient(mainWebSocketService.GetClient(room.RoomOwner));
-            Rooms.Add(room.RoomId.ToString(), room);
-            mainWebSocketService.GetClient(room.RoomOwner).Emit(JsonConvert.SerializeObject(new
+            BlendshapeDict = blendshapeDict;
+            Value = value;
+            Duration = duration;
+        }
+    }
+
+    public struct AvatarPoseTransitionData
+    {
+        public double x;
+        public double y;
+        public double z;
+        public string Duration;
+    }
+
+    /// <summary>
+    /// Class to control the WoZRoom, and process WoZRoom events
+    /// </summary>
+    public class WoZRoomService(ILogger<WoZRoom> logger, MainWebSocketService.MainWebSocketService mainWebSocketService)
+        : AbstractRoomService<WoZRoom>(logger)
+    {
+        protected override ILogger<WoZRoom> Logger { get; set; } = logger;
+        protected sealed override Dictionary<string, WoZRoom> Rooms { get; set; } = new Dictionary<string, WoZRoom>();
+
+        public override void OnRequestRoomCreate(RoomCreationData roomCreationData)
+        {
+            try
+            {
+                WoZRoom room = new WoZRoom(Logger);
+                Logger.LogInformation("Creating room with id: " + room.RoomId + " and owner: " +
+                                      roomCreationData.RoomOwner +
+                                      " and name: " + roomCreationData.RoomName + " and password: " +
+                                      roomCreationData.Password);
+                room.InitRoom(roomCreationData.RoomOwner!, roomCreationData.RoomName, roomCreationData.Password);
+                RoomInfo roomInfo = new RoomInfo(room.RoomName, room.RoomOwner, room.RoomId.ToString(), room.HasPassword(),
+                    room.Clients.Count);
+                room.AddClient(mainWebSocketService.GetClient(room.RoomOwner));
+                Rooms.Add(room.RoomId.ToString(), room);
+                mainWebSocketService.GetClient(room.RoomOwner).Emit(JsonConvert.SerializeObject(new
                 { EventName = EnumEvents.WoZRoomCreated.Name, Data = roomInfo.ToJson() }));
-        }
-        catch (Exception e)
-        {
-            Logger.LogError(e.Message);
-        }
-    }
-
-    public override void OnRequestRoomJoin(string roomId, string clientId, string? password = null)
-    {
-        if (Rooms.TryGetValue(roomId, out WoZRoom room))
-        {
-            if (password != null && !room.VerifyPassword(password))
+            }
+            catch (Exception e)
             {
-                Logger.LogError("Password incorrect");
+                Logger.LogError(e.Message);
+            }
+        }
+
+        public override void OnRequestRoomJoin(string roomId, string clientId, string? password = null)
+        {
+            if (Rooms.TryGetValue(roomId, out WoZRoom room))
+            {
+                if (password != null && !room.VerifyPassword(password))
+                {
+                    Logger.LogError("Password incorrect");
+                    return;
+                }
+
+                room.AddClient(mainWebSocketService.GetClient(clientId));
+
+                mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomJoined.Name, room.RoomId.ToString());
+            }
+        }
+
+        public override void OnRequestRoomLeave(string roomId, string clientId)
+        {
+            if (Rooms.TryGetValue(roomId, out WoZRoom room))
+            {
+                Client.Client client = mainWebSocketService.GetClient(clientId);
+                if (client.RoomId.ToString() != roomId)
+                {
+                    Logger.LogError("Client not in room");
+                    return;
+                }
+
+                room.RemoveClient(mainWebSocketService.GetClient(clientId));
+                mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomLeft.Name, room.RoomId.ToString());
+            }
+        }
+
+        public override void OnRequestRoomBroadcast(string roomId, string message)
+        {
+            if (Rooms.TryGetValue(roomId, out WoZRoom room))
+            {
+                room.BroadcastToRoom(message);
+            }
+        }
+
+        public override void OnRequestPasswordChange(string roomId, string clientId, string newPassword)
+        {
+            if (Rooms.TryGetValue(roomId, out WoZRoom room))
+            {
+                if (room.CheckAdmin(clientId))
+                {
+                    room.ChangePassword(newPassword);
+                    // mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomPasswordChanged.Name, room.RoomId.ToString());
+                    return;
+                }
+
+                Logger.LogError("Client is not admin, Action denied");
+            }
+        }
+
+        public override void OnRequestRoomInfo(string roomId, string clientId)
+        {
+            if (Rooms.TryGetValue(roomId, out WoZRoom room))
+            {
+                mainWebSocketService.GetClient(clientId).Emit("RoomInfo", room.ToString());
+            }
+        }
+
+        public void OnRequestWoZRoomInfos(string clientId)
+        {
+            List<object> roomInfos = new List<object>();
+            if (Rooms.Values.Count == 0)
+            {
+                mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomsInfos.Name, roomInfos);
                 return;
             }
 
-            room.AddClient(mainWebSocketService.GetClient(clientId));
-
-            mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomJoined.Name, room.RoomId.ToString());
-        }
-    }
-
-    public override void OnRequestRoomLeave(string roomId, string clientId)
-    {
-        if (Rooms.TryGetValue(roomId, out WoZRoom room))
-        {
-            Client.Client client = mainWebSocketService.GetClient(clientId);
-            if (client.RoomId.ToString() != roomId)
+            foreach (WoZRoom room in Rooms.Values)
             {
-                Logger.LogError("Client not in room");
-                return;
+                roomInfos.Add(new RoomInfo(room.RoomName, room.RoomOwner, room.RoomId.ToString(), room.HasPassword(),
+                    room.Clients.Count).ToJson());
             }
 
-            room.RemoveClient(mainWebSocketService.GetClient(clientId));
-            mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomLeft.Name, room.RoomId.ToString());
-        }
-    }
-
-    public override void OnRequestRoomBroadcast(string roomId, string message)
-    {
-        if (Rooms.TryGetValue(roomId, out WoZRoom room))
-        {
-            room.BroadcastToRoom(message);
-        }
-    }
-
-    public override void OnRequestPasswordChange(string roomId, string clientId, string newPassword)
-    {
-        if (Rooms.TryGetValue(roomId, out WoZRoom room))
-        {
-            if (room.CheckAdmin(clientId))
-            {
-                room.ChangePassword(newPassword);
-                // mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomPasswordChanged.Name, room.RoomId.ToString());
-                return;
-            }
-
-            Logger.LogError("Client is not admin, Action denied");
-        }
-    }
-
-    public override void OnRequestRoomInfo(string roomId, string clientId)
-    {
-        if (Rooms.TryGetValue(roomId, out WoZRoom room))
-        {
-            mainWebSocketService.GetClient(clientId).Emit("RoomInfo", room.ToString());
-        }
-    }
-
-    public void OnRequestWoZRoomInfos(string clientId)
-    {
-        List<object> roomInfos = new List<object>();
-        if (Rooms.Values.Count == 0)
-        {
             mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomsInfos.Name, roomInfos);
-            return;
         }
 
-        foreach (WoZRoom room in Rooms.Values)
+        public void OnRequestAvatarHeadMove(string roomId, string clientId, AvatarHeadMoveData data)
         {
-            roomInfos.Add(new RoomInfo(room.RoomName, room.RoomOwner, room.RoomId.ToString(), room.HasPassword(),
-                room.Clients.Count).ToJson());
-        }
-
-        mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomsInfos.Name, roomInfos);
-    }
-
-    public void OnRequestAvatarHeadMove(string roomId, string clientId, AvatarHeadMoveData data)
-    {
-        if (Rooms.TryGetValue(roomId, out WoZRoom room))
-        {
-            if (room.CheckAdmin(clientId))
+            if (Rooms.TryGetValue(roomId, out WoZRoom room))
             {
-                foreach (Client.Client client in room.Clients)
+                if (room.CheckAdmin(clientId))
                 {
-                    if (client.ClientId.ToString() != clientId)
-                        room.Emit(EnumEvents.AvatarHeadMove.Name,
-                            JsonConvert.SerializeObject(new { x = data.x, y = data.y, z = data.z }),
-                            client.ClientId.ToString());
+                    foreach (Client.Client client in room.Clients)
+                    {
+                        if (client.ClientId.ToString() != clientId)
+                            room.Emit(EnumEvents.AvatarHeadMove.Name,
+                                JsonConvert.SerializeObject(new { x = data.x, y = data.y, z = data.z }),
+                                client.ClientId.ToString());
+                    }
+
+                    return;
                 }
 
-                return;
+                Logger.LogError("Client is not admin, Action denied");
             }
-
-            Logger.LogError("Client is not admin, Action denied");
         }
-    }
 
-    public void OnRequestAvatarBlendshapeMove(string roomId, string clientId,
-        AvatarBlendshapeMoveData avatarBlendshapeMoveData)
-    {
-        if (Rooms.TryGetValue(roomId, out WoZRoom room))
+        public void OnRequestAvatarBlendshapeMove(string roomId, string clientId,
+            AvatarBlendshapeMoveData avatarBlendshapeMoveData)
         {
-            if (room.CheckAdmin(clientId))
+            if (Rooms.TryGetValue(roomId, out WoZRoom room))
             {
-                foreach (Client.Client client in room.Clients)
+                if (room.CheckAdmin(clientId))
                 {
-                    if (client.ClientId.ToString() != clientId)
-                        room.Emit(EnumEvents.AvatarBlendshapeMove.Name,
-                            JsonConvert.SerializeObject(
-                                new { BlendshapeDict = avatarBlendshapeMoveData.BlendshapeDict }),
-                            client.ClientId.ToString());
+                    foreach (Client.Client client in room.Clients)
+                    {
+                        if (client.ClientId.ToString() != clientId)
+                            room.Emit(EnumEvents.AvatarBlendshapeMove.Name,
+                                JsonConvert.SerializeObject(
+                                    new { BlendshapeDict = avatarBlendshapeMoveData.BlendshapeDict }),
+                                client.ClientId.ToString());
+                    }
+
+                    return;
                 }
 
-                return;
+                Logger.LogError("Client is not admin, Action denied");
             }
-
-            Logger.LogError("Client is not admin, Action denied");
         }
-    }
 
-    public void OnRequestAvatarBlendshapeTransition(string roomId, string clientId,
-        AvatarBlendshapeTransitionData blendshapeTransitionData)
-    {
-        if (Rooms.TryGetValue(roomId, out WoZRoom room))
+        public void OnRequestAvatarBlendshapeTransition(string roomId, string clientId,
+            AvatarBlendshapeTransitionData blendshapeTransitionData)
         {
-            if (room.CheckAdmin(clientId))
+            if (Rooms.TryGetValue(roomId, out WoZRoom room))
             {
-                foreach (Client.Client client in room.Clients)
+                if (room.CheckAdmin(clientId))
                 {
-                    if (client.ClientId.ToString() != clientId)
-                        room.Emit(EnumEvents.AvatarBlendshapeTransition.Name,
-                            JsonConvert.SerializeObject(new
-                            {
-                                blendshapeDict = blendshapeTransitionData.BlendshapeDict,
-                                duration = blendshapeTransitionData.Duration
-                            }),
-                            client.ClientId.ToString());
+                    foreach (Client.Client client in room.Clients)
+                    {
+                        if (client.ClientId.ToString() != clientId)
+                            room.Emit(EnumEvents.AvatarBlendshapeTransition.Name,
+                                JsonConvert.SerializeObject(new
+                                {
+                                    blendshapeDict = blendshapeTransitionData.BlendshapeDict,
+                                    duration = blendshapeTransitionData.Duration
+                                }),
+                                client.ClientId.ToString());
+                    }
+
+                    return;
                 }
 
-                return;
+                Logger.LogError("Client is not admin, Action denied");
             }
-
-            Logger.LogError("Client is not admin, Action denied");
         }
-    }
 
-    public void OnRequestAvatarPoseTransition(string roomId, string clientId,
-        AvatarPoseTransitionData poseTransitionData)
-    {
-        if (Rooms.TryGetValue(roomId, out WoZRoom room))
+        public void OnRequestAvatarPoseTransition(string roomId, string clientId,
+            AvatarPoseTransitionData poseTransitionData)
         {
-            if (room.CheckAdmin(clientId))
+            if (Rooms.TryGetValue(roomId, out WoZRoom room))
             {
-                foreach (Client.Client client in room.Clients)
+                if (room.CheckAdmin(clientId))
                 {
-                    if (client.ClientId.ToString() != clientId)
-                        room.Emit(EnumEvents.AvatarPoseTransition.Name,
-                            JsonConvert.SerializeObject(new
-                            {
-                                x = poseTransitionData.x, y = poseTransitionData.y, z = poseTransitionData.z,
-                                Duration = poseTransitionData.Duration
-                            }),
-                            client.ClientId.ToString());
+                    foreach (Client.Client client in room.Clients)
+                    {
+                        if (client.ClientId.ToString() != clientId)
+                            room.Emit(EnumEvents.AvatarPoseTransition.Name,
+                                JsonConvert.SerializeObject(new
+                                {
+                                    x = poseTransitionData.x,
+                                    y = poseTransitionData.y,
+                                    z = poseTransitionData.z,
+                                    Duration = poseTransitionData.Duration
+                                }),
+                                client.ClientId.ToString());
+                    }
+
+                    return;
                 }
 
-                return;
+                Logger.LogError("Client is not admin, Action denied");
             }
-
-            Logger.LogError("Client is not admin, Action denied");
         }
     }
 }

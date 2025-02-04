@@ -1,33 +1,35 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 
-namespace act_server.Controller;
-public struct RoomCreationData
+namespace act_server.Controller
 {
-    public readonly string? RoomName;
-    public readonly string? RoomOwner;
-    public readonly string? Password;
-
-    public RoomCreationData(string? roomName, string? roomOwner, string? password)
+    public struct RoomCreationData
     {
-        RoomName = roomName;
-        RoomOwner = roomOwner ?? null;
-        Password = password;
+        public readonly string? RoomName;
+        public readonly string? RoomOwner;
+        public readonly string? Password;
+
+        public RoomCreationData(string? roomName, string? roomOwner, string? password)
+        {
+            RoomName = roomName;
+            RoomOwner = roomOwner ?? null;
+            Password = password;
+        }
     }
-}
-public abstract class AbstractRoomService<TRoom>(ILogger<TRoom> logger)
-    where TRoom : Room.Room
-{
+    public abstract class AbstractRoomService<TRoom>(ILogger<TRoom> logger)
+        where TRoom : Room.Room
+    {
 
-    protected abstract ILogger<TRoom> Logger { get; set; }
+        protected abstract ILogger<TRoom> Logger { get; set; }
 
-    protected abstract Dictionary<string, TRoom> Rooms { get; set; }
-    public abstract void OnRequestRoomCreate(RoomCreationData roomCreationData);
-    public abstract void OnRequestRoomJoin( string roomId, string clientId, string? password = null);
-    public abstract void OnRequestRoomLeave( string roomId, string clientId);
-    public abstract void OnRequestRoomBroadcast( string roomId, string message);
-    
-    public abstract void OnRequestPasswordChange( string roomId, string clientId, string newPassword);
-    public abstract void OnRequestRoomInfo( string roomId, string clientId);
-    
+        protected abstract Dictionary<string, TRoom> Rooms { get; set; }
+        public abstract void OnRequestRoomCreate(RoomCreationData roomCreationData);
+        public abstract void OnRequestRoomJoin(string roomId, string clientId, string? password = null);
+        public abstract void OnRequestRoomLeave(string roomId, string clientId);
+        public abstract void OnRequestRoomBroadcast(string roomId, string message);
+
+        public abstract void OnRequestPasswordChange(string roomId, string clientId, string newPassword);
+        public abstract void OnRequestRoomInfo(string roomId, string clientId);
+
+    }
 }

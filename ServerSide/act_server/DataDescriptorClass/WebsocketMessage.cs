@@ -3,17 +3,19 @@ using System;
 using act_server.Enum;
 using act_server.Interface;
 
-namespace act_server.DataDescriptorClass;
-
-public class WebsocketMessage(string eventName, object? data) : IWebsocketPayload
+namespace act_server.DataDescriptorClass
 {
-    public object? Data { get; set; } = data;
 
-    public string EventName { get; } = EnumEvents.FromName(eventName).Name;
-
-
-    public string ToJson()
+    public class WebsocketMessage(string eventName, object? data) : IWebsocketPayload
     {
-        return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        public object? Data { get; set; } = data;
+
+        public string EventName { get; } = EnumEvents.FromName(eventName).Name;
+
+
+        public string ToJson()
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
     }
 }
