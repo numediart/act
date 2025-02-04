@@ -16,9 +16,12 @@ namespace act_server.Controller
             Password = password;
         }
     }
-    public abstract class AbstractRoomService<TRoom>(ILogger<TRoom> logger)
+    public abstract class AbstractRoomService<TRoom>
         where TRoom : Room.Room
     {
+        public AbstractRoomService<TRoom>(ILogger<TRoom> logger) {
+            Logger = logger;
+        }
 
         protected abstract ILogger<TRoom> Logger { get; set; }
 

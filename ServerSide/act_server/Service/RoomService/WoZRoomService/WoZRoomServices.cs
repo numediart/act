@@ -50,10 +50,15 @@ namespace act_server.Service.RoomService.WoZRoomService
     /// <summary>
     /// Class to control the WoZRoom, and process WoZRoom events
     /// </summary>
-    public class WoZRoomService(ILogger<WoZRoom> logger, MainWebSocketService.MainWebSocketService mainWebSocketService)
-        : AbstractRoomService<WoZRoom>(logger)
+    public class WoZRoomService : AbstractRoomService<WoZRoom>
     {
-        protected override ILogger<WoZRoom> Logger { get; set; } = logger;
+        public WoZRoomService(ILogger<WoZRoom> logger, MainWebSocketService.MainWebSocketService mainWebSocketService) : base(logger)
+        {
+            Logger = logger;
+            _mainWebSocketService = mainWebSocketService;
+        }
+        protected override ILogger<WoZRoom> Logger { get; set; }
+        protected MainWebSocketService.MainWebSocketService _mainWebSocketService;
         protected sealed override Dictionary<string, WoZRoom> Rooms { get; set; } = new Dictionary<string, WoZRoom>();
 
         public override void OnRequestRoomCreate(RoomCreationData roomCreationData)
@@ -68,9 +73,9 @@ namespace act_server.Service.RoomService.WoZRoomService
                 room.InitRoom(roomCreationData.RoomOwner!, roomCreationData.RoomName, roomCreationData.Password);
                 RoomInfo roomInfo = new RoomInfo(room.RoomName, room.RoomOwner, room.RoomId.ToString(), room.HasPassword(),
                     room.Clients.Count);
-                room.AddClient(mainWebSocketService.GetClient(room.RoomOwner));
+                room.AddClient(_mainWebSocketService.GetClient(room.RoomOwner));
                 Rooms.Add(room.RoomId.ToString(), room);
-                mainWebSocketService.GetClient(room.RoomOwner).Emit(JsonConvert.SerializeObject(new
+                _mainWebSocketService.GetClient(room.RoomOwner).Emit(JsonConvert.SerializeObject(new
                 { EventName = EnumEvents.WoZRoomCreated.Name, Data = roomInfo.ToJson() }));
             }
             catch (Exception e)
@@ -89,9 +94,9 @@ namespace act_server.Service.RoomService.WoZRoomService
                     return;
                 }
 
-                room.AddClient(mainWebSocketService.GetClient(clientId));
+                room.AddClient(_mainWebSocketService.GetClient(clientId));
 
-                mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomJoined.Name, room.RoomId.ToString());
+                _mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomJoined.Name, room.RoomId.ToString());
             }
         }
 
@@ -99,15 +104,15 @@ namespace act_server.Service.RoomService.WoZRoomService
         {
             if (Rooms.TryGetValue(roomId, out WoZRoom room))
             {
-                Client.Client client = mainWebSocketService.GetClient(clientId);
+                Client.Client client = _mainWebSocketService.GetClient(clientId);
                 if (client.RoomId.ToString() != roomId)
                 {
                     Logger.LogError("Client not in room");
                     return;
                 }
 
-                room.RemoveClient(mainWebSocketService.GetClient(clientId));
-                mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomLeft.Name, room.RoomId.ToString());
+                room.RemoveClient(_mainWebSocketService.GetClient(clientId));
+                _mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomLeft.Name, room.RoomId.ToString());
             }
         }
 
@@ -138,7 +143,7 @@ namespace act_server.Service.RoomService.WoZRoomService
         {
             if (Rooms.TryGetValue(roomId, out WoZRoom room))
             {
-                mainWebSocketService.GetClient(clientId).Emit("RoomInfo", room.ToString());
+                _mainWebSocketService.GetClient(clientId).Emit("RoomInfo", room.ToString());
             }
         }
 
@@ -147,7 +152,7 @@ namespace act_server.Service.RoomService.WoZRoomService
             List<object> roomInfos = new List<object>();
             if (Rooms.Values.Count == 0)
             {
-                mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomsInfos.Name, roomInfos);
+                _mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomsInfos.Name, roomInfos);
                 return;
             }
 
@@ -157,7 +162,7 @@ namespace act_server.Service.RoomService.WoZRoomService
                     room.Clients.Count).ToJson());
             }
 
-            mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomsInfos.Name, roomInfos);
+            _mainWebSocketService.GetClient(clientId).Emit(EnumEvents.WoZRoomsInfos.Name, roomInfos);
         }
 
         public void OnRequestAvatarHeadMove(string roomId, string clientId, AvatarHeadMoveData data)

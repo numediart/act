@@ -12,32 +12,36 @@ using Newtonsoft.Json;
 namespace act_server.Service.RoomService
 {
 
-    public class LiveStreamingRoomService(ILogger<LiveStreamingRoom> logger, MainWebSocketService.MainWebSocketService mainWebSocketService)
-        : AbstractRoomService<LiveStreamingRoom>(logger)
+    public class LiveStreamingRoomService : AbstractRoomService<LiveStreamingRoom>
     {
-        protected override ILogger<LiveStreamingRoom> Logger { get; set; } = logger;
-        private MainWebSocketService.MainWebSocketService _mainWebSocketService = mainWebSocketService;
+        public LiveStreamingRoomService(ILogger<LiveStreamingRoom> logger, MainWebSocketService.MainWebSocketService mainWebSocketService) : base(logger)
+        {
+            Logger = logger;
+            _mainWebSocketService = mainWebSocketService;
+        }
+        protected override ILogger<LiveStreamingRoom> Logger { get; set; }
+        private MainWebSocketService.MainWebSocketService _mainWebSocketService;
 
         protected sealed override Dictionary<string, LiveStreamingRoom> Rooms { get; set; } =
             new Dictionary<string, LiveStreamingRoom>();
 
         public override void OnRequestRoomCreate(RoomCreationData roomCreationData)
         {
-            logger.LogInformation("Creating room");
+            Logger.LogInformation("Creating room");
             LiveStreamingRoom room = new LiveStreamingRoom(Logger);
             _mainWebSocketService.RegisterWebsocketService<ConnectionBehavior>("/openface/ActionUnit/" + room.RoomId);
             _mainWebSocketService.RegisterWebsocketService<ConnectionBehavior>("/openface/AudioData/" + room.RoomId);
             _mainWebSocketService.RegisterWebsocketService<ConnectionBehavior>("/mediapipe/blendshapedata/" + room.RoomId);
 
-            logger.LogInformation("Room created with id: " + room.RoomId);
+            Logger.LogInformation("Room created with id: " + room.RoomId);
             room.InitRoom(roomCreationData.RoomOwner ?? "", roomCreationData.RoomName, roomCreationData.Password);
 
             try
             {
                 Rooms.Add(room.RoomId.ToString(), room);
-                room.AddClient(mainWebSocketService.GetClient(roomCreationData.RoomOwner!));
+                room.AddClient(_mainWebSocketService.GetClient(roomCreationData.RoomOwner!));
                 RoomInfo roomInfo = new RoomInfo(room.RoomName, room.RoomOwner, room.RoomId.ToString(), room.HasPassword(), room.Clients.Count);
-                mainWebSocketService.GetClient(roomCreationData.RoomOwner!).Emit(EnumEvents.LiveStreamingRoomCreated.Name, roomInfo.ToJson());
+                _mainWebSocketService.GetClient(roomCreationData.RoomOwner!).Emit(EnumEvents.LiveStreamingRoomCreated.Name, roomInfo.ToJson());
             }
             catch (System.Exception e)
             {
@@ -51,8 +55,8 @@ namespace act_server.Service.RoomService
             {
                 if (password != null && room.VerifyPassword(password))
                 {
-                    room.AddClient(mainWebSocketService.GetClient(clientId));
-                    mainWebSocketService.GetClient(clientId).Emit(EnumEvents.LivestreamingRoomJoined.Name, room.RoomId.ToString());
+                    room.AddClient(_mainWebSocketService.GetClient(clientId));
+                    _mainWebSocketService.GetClient(clientId).Emit(EnumEvents.LivestreamingRoomJoined.Name, room.RoomId.ToString());
                 }
                 else
                 {
@@ -69,8 +73,8 @@ namespace act_server.Service.RoomService
         {
             if (Rooms.TryGetValue(roomId, out LiveStreamingRoom room))
             {
-                room.RemoveClient(mainWebSocketService.GetClient(clientId));
-                mainWebSocketService.GetClient(clientId).Emit("RoomLeft", room.RoomId.ToString());
+                room.RemoveClient(_mainWebSocketService.GetClient(clientId));
+                _mainWebSocketService.GetClient(clientId).Emit("RoomLeft", room.RoomId.ToString());
             }
             else
             {
@@ -113,7 +117,7 @@ namespace act_server.Service.RoomService
         {
             if (Rooms.TryGetValue(roomId, out LiveStreamingRoom room))
             {
-                mainWebSocketService.GetClient(clientId).Emit("RoomInfo", room.ToString());
+                _mainWebSocketService.GetClient(clientId).Emit("RoomInfo", room.ToString());
             }
             else
             {
@@ -126,7 +130,7 @@ namespace act_server.Service.RoomService
             List<object> roomInfos = new List<object>();
             if (Rooms.Values.Count == 0)
             {
-                mainWebSocketService.GetClient(clientId).Emit(EnumEvents.LiveStreamingRoomsInfos.Name, roomInfos);
+                _mainWebSocketService.GetClient(clientId).Emit(EnumEvents.LiveStreamingRoomsInfos.Name, roomInfos);
                 return;
             }
 
@@ -136,7 +140,7 @@ namespace act_server.Service.RoomService
                     room.Clients.Count).ToJson());
             }
 
-            mainWebSocketService.GetClient(clientId).Emit(EnumEvents.LiveStreamingRoomsInfos.Name, roomInfos);
+            _mainWebSocketService.GetClient(clientId).Emit(EnumEvents.LiveStreamingRoomsInfos.Name, roomInfos);
         }
 
         public struct poseData
@@ -225,7 +229,7 @@ namespace act_server.Service.RoomService
         /// <param name="roomId"></param>
         public void EmitRoomId(string clientId, string roomId)
         {
-            mainWebSocketService.GetClient(clientId).Emit("RoomId", roomId);
+            _mainWebSocketService.GetClient(clientId).Emit("RoomId", roomId);
         }
     }
 }
