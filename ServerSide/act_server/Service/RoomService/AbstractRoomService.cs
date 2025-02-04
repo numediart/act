@@ -19,7 +19,7 @@ namespace act_server.Controller
     public abstract class AbstractRoomService<TRoom>
         where TRoom : Room.Room
     {
-        public AbstractRoomService<TRoom>(ILogger<TRoom> logger) {
+        public AbstractRoomService(ILogger<TRoom> logger) {
             Logger = logger;
         }
 
